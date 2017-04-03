@@ -1,0 +1,750 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="优化,PHP,Nginx,性能," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="结论先说优化要点：
+Nginx work_processes 设置为CPU核心数
+Nginx 设置 worker_cpu_affinity CPU亲和性绑定 Nginx 进程
+Nginx worker_rlimit_nofile 设置为较大的数，可应对较大的并发量，这里设置为 102400
+Nginx worker_connections 设置为较大的数，以应对高并发，这里设置为 102400
+N">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LNMP 性能优化">
+<meta property="og:url" content="http://www.liuzhixiang.com/2015/11/23/LNMP-Optimize/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="结论先说优化要点：
+Nginx work_processes 设置为CPU核心数
+Nginx 设置 worker_cpu_affinity CPU亲和性绑定 Nginx 进程
+Nginx worker_rlimit_nofile 设置为较大的数，可应对较大的并发量，这里设置为 102400
+Nginx worker_connections 设置为较大的数，以应对高并发，这里设置为 102400
+N">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LNMP 性能优化">
+<meta name="twitter:description" content="结论先说优化要点：
+Nginx work_processes 设置为CPU核心数
+Nginx 设置 worker_cpu_affinity CPU亲和性绑定 Nginx 进程
+Nginx worker_rlimit_nofile 设置为较大的数，可应对较大的并发量，这里设置为 102400
+Nginx worker_connections 设置为较大的数，以应对高并发，这里设置为 102400
+N">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2015/11/23/LNMP-Optimize/"/>
+
+
+  <title> LNMP 性能优化 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                LNMP 性能优化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-11-23T16:02:32+08:00" content="2015-11-23">
+              2015-11-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/PHP/" itemprop="url" rel="index">
+                    <span itemprop="name">PHP</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/11/23/LNMP-Optimize/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/11/23/LNMP-Optimize/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><h3 id="先说优化要点："><a href="#先说优化要点：" class="headerlink" title="先说优化要点："></a>先说优化要点：</h3><ul>
+<li>Nginx <code>work_processes</code> 设置为CPU核心数</li>
+<li>Nginx 设置 <code>worker_cpu_affinity</code> CPU亲和性绑定 Nginx 进程</li>
+<li>Nginx <code>worker_rlimit_nofile</code> 设置为较大的数，可应对较大的并发量，这里设置为 102400</li>
+<li>Nginx <code>worker_connections</code> 设置为较大的数，以应对高并发，这里设置为 102400</li>
+<li>Nginx 使用 <code>epoll</code> 提高性能</li>
+<li>Nginx 连接后端 <code>php-fpm</code> 使用 <code>unixsocket</code> 方式，比使用 <code>tcp</code> 方式性能好太多（ <code>tcp</code> 方式在高并发下稳定较 <code>unixsocket</code> 方式好，但在高并发下性能太差）</li>
+<li>Nginx 使用 <code>upstream</code> 连接到后端的多个 <code>php-fpm</code> 实例中，每个 <code>php-fpm</code> 实例监听一个 <code>unixsocket</code>，可提高稳定性，建议 <code>php-fpm</code> 实例数与CPU核心数相同（使用 Apache ab 进行压测，在高并发下错误为0）</li>
+<li>php-fpm 监听 <code>unixsocket</code> 文件放置在 <code>/dev/shm/</code> 下，使用内存文件系统，提高 io 性能</li>
+<li>php-fpm <code>pm.max_childred</code> 不宜设置的过大，CPU核心数的 1~2 倍即可，<code>pm</code> 设置为 <code>pm = dynamic</code>，<code>pm.start_servers</code> 设置为 <code>pm.max_childred</code> 的一般, <code>pm.min_spare_servers</code> 设置为 <code>pm.max_childred</code> 的 1/4, <code>pm.max_spare_servers</code> 设置与 <code>pm.max_childred</code> 相同</li>
+<li>php-fpm <code>pm.max_requests</code> 设置为一个较大的值，这里设置为 200000，可根据 <code>Apache ab</code> 测试中查看内存的占用率查看是否有内存泄漏情况，如果存在内存泄漏可调小该值</li>
+<li>php-fpm 打开 <code>slowlog</code>，将 <code>request_slowlog_timeout</code> 设置为 1，即在响应时间超过 1s 时就记入 <code>slowlog</code>，一个响应迅速的网站应当在毫秒级别响应用户请求</li>
+<li>php-fpm 设置 <code>rlimit_files</code> 为一个较大值，这里设置为 102400</li>
+<li>php 打开 <code>opcache</code> 可显著提高性能，PHP 文件包含会导致性能降低，打开 <code>opcache</code> 能够显著提升性能</li>
+<li>php 使用 <code>redis</code> 作为 session 存储，PHP 默认使用文件作为 session 存储，性能较差（此处可在打开了 php-fpm <code>slowlog</code> 时进行高并发压测，可以看到 <code>session_start</code> 函数调用影响了性能）</li>
+<li>redis 使用多实例，redis 为单线程，不能利用多CPU核心，使用多个实例能够提高性能（此处实例数为 10 个）</li>
+</ul>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>配置文件（服务器配置为 16核32G内存）：</p>
+<p>nginx.conf:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">worker_processes  16;</div><div class="line">worker_cpu_affinity 0000000000000001 0000000000000010 0000000000000100 0000000000001000 0000000000010000 0000000000100000 0000000001000000 0000000010000000 0000000100000000 0000001000000000 0000010000000000 0000100000000000 0001000000000000 0010000000000000 0100000000000000 1000000000000000;</div><div class="line">worker_rlimit_nofile 102400;</div><div class="line"></div><div class="line">error_log  logs/error.log  notice;</div><div class="line"></div><div class="line">events &#123;</div><div class="line">    use epoll;</div><div class="line">    worker_connections  102400;</div><div class="line">&#125;</div><div class="line"></div><div class="line">http &#123;</div><div class="line">    include       mime.types;</div><div class="line">    default_type  application/octet-stream;</div><div class="line"></div><div class="line">    client_max_body_size 6m;</div><div class="line"></div><div class="line">    sendfile        on;</div><div class="line">    keepalive_timeout  65;</div><div class="line"></div><div class="line">    fastcgi_connect_timeout 300;</div><div class="line">    fastcgi_send_timeout 300;</div><div class="line">    fastcgi_read_timeout 300;</div><div class="line">    fastcgi_buffer_size 256k;</div><div class="line">    fastcgi_busy_buffers_size 256k;</div><div class="line">    fastcgi_temp_file_write_size 1024k;</div><div class="line">    fastcgi_intercept_errors on;</div><div class="line">    fastcgi_buffers 8 256k;</div><div class="line"></div><div class="line">    upstream php-fpm &#123;</div><div class="line">        server unix:/dev/shm/php-fpm1.sock;</div><div class="line">        server unix:/dev/shm/php-fpm2.sock;</div><div class="line">        server unix:/dev/shm/php-fpm3.sock;</div><div class="line">        server unix:/dev/shm/php-fpm4.sock;</div><div class="line">        server unix:/dev/shm/php-fpm5.sock;</div><div class="line">        server unix:/dev/shm/php-fpm6.sock;</div><div class="line">        server unix:/dev/shm/php-fpm7.sock;</div><div class="line">        server unix:/dev/shm/php-fpm8.sock;</div><div class="line">        server unix:/dev/shm/php-fpm9.sock;</div><div class="line">        server unix:/dev/shm/php-fpm10.sock;</div><div class="line">        server unix:/dev/shm/php-fpm11.sock;</div><div class="line">        server unix:/dev/shm/php-fpm12.sock;</div><div class="line">        server unix:/dev/shm/php-fpm13.sock;</div><div class="line">        server unix:/dev/shm/php-fpm14.sock;</div><div class="line">        server unix:/dev/shm/php-fpm15.sock;</div><div class="line">        server unix:/dev/shm/php-fpm16.sock;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    include vhosts/*;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>vhosts/default.conf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">    listen       80;</div><div class="line">    server_name  localhost;</div><div class="line">    charset      utf-8;</div><div class="line">    root         /data/www/default/;</div><div class="line"></div><div class="line">    location / &#123;</div><div class="line">        index  index.html index.htm index.php;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    location ~ \.php$ &#123;</div><div class="line">        fastcgi_pass   php-fpm;</div><div class="line">        fastcgi_index  index.php;</div><div class="line">        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</div><div class="line">        include        fastcgi_params;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>php-fpm.conf </p>
+<p>配置多个 php-fpm 实例，配置文件中的 pid，error_log，listen，slowlog 都要相应修改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[global]</div><div class="line">pid = run/php-fpm1.pid</div><div class="line">error_log = log/php-fpm1.log</div><div class="line">log_level = notice</div><div class="line"></div><div class="line">[www]</div><div class="line">listen = /dev/shm/php-fpm1.sock</div><div class="line">pm = dynamic</div><div class="line">pm.max_children = 16</div><div class="line">pm.start_servers = 8</div><div class="line">pm.min_spare_servers = 4</div><div class="line">pm.max_spare_servers = 16</div><div class="line">pm.process_idle_timeout = 10s;</div><div class="line">pm.max_requests = 20000</div><div class="line"></div><div class="line">slowlog = log/$pool.1.log.slow</div><div class="line">request_slowlog_timeout = 1 </div><div class="line"></div><div class="line">rlimit_files = 102400</div></pre></td></tr></table></figure>
+<p>php-fpm 关键配置是启动多个实例，监听多个 <code>unixsocket</code> 文件。</p>
+<p>php.ini（关键配置）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">session.save_handler = redis</div><div class="line">session.save_path = &quot;tcp://127.0.0.1:6371, tcp://127.0.0.1:6372, tcp://127.0.0.1:6373, tcp://127.0.0.1:6374, tcp://127.0.0.1:6375, tcp://127.0.0.1:6376, tcp://127.0.0.1:6377, tcp://127.0.0.1:6378, tcp://127.0.0.1:6379&quot;</div><div class="line"></div><div class="line">[opcache]</div><div class="line">zend_extension=opcache.so</div><div class="line">opcache.enable=1</div><div class="line">opcache.revalidate_freq=10</div><div class="line"></div><div class="line">extension=redis.so</div></pre></td></tr></table></figure>
+<p>相应的，redis-server 应启动多个实例</p>
+<h2 id="调优经过"><a href="#调优经过" class="headerlink" title="调优经过"></a>调优经过</h2><p>场景是一个推广的H5小游戏，游戏结束后可根据名次获得奖品。业务逻辑较为简单，但因需要在各大社交平台上推广，对性能要求较高，要求</p>
+<ul>
+<li>可承受并发在 1500 左右</li>
+<li>每秒请求数 1500 以上</li>
+<li>错误数极少（个位数）</li>
+<li>90% 请求在 200ms 内完成</li>
+<li>平均响应时间 &lt; 200 ms。</li>
+</ul>
+<p>以上也是压力测试需要关注的几个点，压测时要同时关注，缺一不可。</p>
+<p>首先根据网上搜索到的一些文章对 nginx 进行了配置：工作进程数、CPU 亲和性、连接数、打开文件限制等。对 php-fpm 使用了 /dev/shm 下的 unixsocket 进行监听，打开了两个 php-fpm 实例以防止高并发下的不稳定。此时使用 Apache ab 进行压测，发现并发能够完成测试，但错误请求 <code>Failed requests</code> 过多，达到 40% 左右。</p>
+<p>想到 php-fpm 在高并发下不稳定，将 php-fpm 切换到监听本机 127.0.0.1 下的 9000 和 9001 端口进行测试，发现错误为 0，但并发数达不到要求。以上两种方式测试同时监控服务器 CPU、内存使用情况，发现在使用 unixsocket 进行通信时 CPU 占用在 30%，而使用 tcp 进行通信 CPU 会卡在 100% 一段时间。</p>
+<p>最终开启 16 个 php-fpm 实例，能够在错误数为 0 的情况下完成测试，此时每秒处理请求数达不到要求。突然想到 php 在使用文件作为 session 存储时会在请求开始时锁定文件，请求结束后再释放锁。于是将 php 改为 session handler 改为 redis，并开启了 php-fpm 的 slowlog 设置为 1s。</p>
+<p>再次压测发现性能出现在 session_start() 函数调用，于是将 redis-server 也开启了多个实例，压测发现 slowlog 不再出现 session_start() 调用。</p>
+<p>最后将 php 的 opcache 打开，又提升了不少性能。</p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>PHP 程序逻辑为：</p>
+<p>打开 session，包含文件，连接数据库，输出内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">session_start();</div><div class="line">require &apos;api.php&apos;;</div><div class="line">new PDO(&apos;mysql:...&apos;, &apos;...&apos;, &apos;...&apos;);</div><div class="line">echo &apos;something&apos;;</div></pre></td></tr></table></figure>
+<p>Apache ab 测试 1500 并发 15000 个请求，90% 的请求在 200ms 内完成，平均响应时间 190ms，每秒钟处理请求数在 7500，错误请求为0.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ab -c 1500 -n 15000 http://www.example.com/test.php</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/优化/" rel="tag">#优化</a>
+          
+            <a href="/tags/PHP/" rel="tag">#PHP</a>
+          
+            <a href="/tags/Nginx/" rel="tag">#Nginx</a>
+          
+            <a href="/tags/性能/" rel="tag">#性能</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/10/17/Using-Xhprof/" rel="next" title="使用Xhprof检测PHP性能短板">
+                <i class="fa fa-chevron-left"></i> 使用Xhprof检测PHP性能短板
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/12/08/GEO-Distance-Calculation/" rel="prev" title="地理空间距离计算">
+                地理空间距离计算 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">1.</span> <span class="nav-text">结论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#先说优化要点："><span class="nav-number">1.1.</span> <span class="nav-text">先说优化要点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">1.2.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调优经过"><span class="nav-number">2.</span> <span class="nav-text">调优经过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果"><span class="nav-number">3.</span> <span class="nav-text">结果</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2015/11/23/LNMP-Optimize/';
+      var disqus_title = "LNMP 性能优化";
+      var disqus_url = 'http://www.liuzhixiang.com/2015/11/23/LNMP-Optimize/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

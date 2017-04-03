@@ -1,0 +1,738 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="HTML5,Server-sent-Event," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="什么是Server-sent EventServer-sent Event 最开始是Opera提出的，后被为w3c加入了HTML5标准。用于服务器向浏览器推送消息。如何
+相似的技术对比与Server-sent Event类似的技术还有：
+
+polling 客户端轮训
+Long polling 客户端长轮训
+Web Socket 直接建立Socket连接
+
+polling 客户端每隔一定时间向服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么HTML5中的Server-sent Event没有被广泛使用">
+<meta property="og:url" content="http://www.liuzhixiang.com/2014/12/18/HTTP-Server-sent/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="什么是Server-sent EventServer-sent Event 最开始是Opera提出的，后被为w3c加入了HTML5标准。用于服务器向浏览器推送消息。如何
+相似的技术对比与Server-sent Event类似的技术还有：
+
+polling 客户端轮训
+Long polling 客户端长轮训
+Web Socket 直接建立Socket连接
+
+polling 客户端每隔一定时间向服务器">
+<meta property="og:image" content="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/long-polling.png">
+<meta property="og:image" content="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/websocket.png">
+<meta property="og:image" content="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/server-sent-event.png">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为什么HTML5中的Server-sent Event没有被广泛使用">
+<meta name="twitter:description" content="什么是Server-sent EventServer-sent Event 最开始是Opera提出的，后被为w3c加入了HTML5标准。用于服务器向浏览器推送消息。如何
+相似的技术对比与Server-sent Event类似的技术还有：
+
+polling 客户端轮训
+Long polling 客户端长轮训
+Web Socket 直接建立Socket连接
+
+polling 客户端每隔一定时间向服务器">
+<meta name="twitter:image" content="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/long-polling.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2014/12/18/HTTP-Server-sent/"/>
+
+
+  <title> 为什么HTML5中的Server-sent Event没有被广泛使用 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                为什么HTML5中的Server-sent Event没有被广泛使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2014-12-18T22:18:21+08:00" content="2014-12-18">
+              2014-12-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/12/18/HTTP-Server-sent/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2014/12/18/HTTP-Server-sent/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是Server-sent-Event"><a href="#什么是Server-sent-Event" class="headerlink" title="什么是Server-sent Event"></a>什么是Server-sent Event</h2><p>Server-sent Event 最开始是Opera提出的，后被为w3c加入了HTML5标准。用于服务器向浏览器推送消息。<br>如何</p>
+<h2 id="相似的技术对比"><a href="#相似的技术对比" class="headerlink" title="相似的技术对比"></a>相似的技术对比</h2><p>与Server-sent Event类似的技术还有：</p>
+<ul>
+<li>polling 客户端轮训</li>
+<li>Long polling 客户端长轮训</li>
+<li>Web Socket 直接建立Socket连接</li>
+</ul>
+<p>polling 客户端每隔<em>一定时间</em>向服务器请求数据，服务器查询数据后无论是否有数据，直接返回给客户端。<br>这种方法的关键在于客户端请求的间隔时间，时间短则没有效率，时间长则实时性不高。缺点是会发送很多无用的请求，造成性能浪费。</p>
+<p>Long polling 与polling不同的在于服务器在查询数据后若无数据则不返回给客户端，而是等待一定时间再次查询，直到有数据返回。<br>在实际应用中还会有一个超时时间，比如30s，在超时时间过后没有数据也返回，然后客户端再次发起连接。<br>这种方法关键在于服务器端查询的间隔时间和消息的密集度。对于服务器端的间隔时间与polling相同在实际应用中可以使用消息队列或其他可以阻塞程序的操作来进行。<br>这种方式相对于polling的优点是减少了网络带宽的浪费，缺点是如果消息密度较大则与polling相同。</p>
+<p><img src="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/long-polling.png" alt=""></p>
+<p>Web Socket 是在客户端与服务器端建立了真正的双向连接，优点是建立连接后实时性高，而且无消息时基本没有资源浪费。缺点是与polling和long polliing相比改动较大，需要代理服务器支持。</p>
+<p><img src="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/websocket.png" alt=""></p>
+<p>Server sent-Event 像是long polling的升级版，在客户端发起请求后，服务端不断开连接，而是在有消息是向客户端不断写入消息。Server-sent Event有客户端的支持: EventSource。</p>
+<p><img src="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/server-sent-event.png" alt=""></p>
+<p>这种方式看起来是非常好的，但Web QQ、微博等都没有使用此种方式。猜想这其中应该有两方面的原因：</p>
+<ol>
+<li>需要代理服务器支持，代理服务器也许会缓存所有的响应，在响应结束后才会发到客户端，这样Server-sent Event就无法工作。</li>
+<li>扩展能力没有long polling有优势。</li>
+</ol>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>参考以下链接：</p>
+<blockquote>
+<p>HTML5 服务器推送事件（Server-sent Events）实战开发: <a href="http://www.ibm.com/developerworks/cn/web/1307_chengfu_serversentevent/" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/web/1307_chengfu_serversentevent/</a></p>
+<p>SSE: 服务器发送事件: <a href="http://javascript.ruanyifeng.com/htmlapi/eventsource.html" target="_blank" rel="external">http://javascript.ruanyifeng.com/htmlapi/eventsource.html</a></p>
+</blockquote>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Server-sent Event作为HTML5的标准，有客户端的支持，有着较快的开发效率、较高实时性，应当是服务器向客户端推送的完美解决方案。以上的种种原因，它并没有被广泛应用。</p>
+<p>参考链接：</p>
+<blockquote>
+<p>WebSockets vs Server-Sent Events vs Long-polling: <a href="http://dsheiko.com/weblog/websockets-vs-sse-vs-long-polling/" target="_blank" rel="external">http://dsheiko.com/weblog/websockets-vs-sse-vs-long-polling/</a></p>
+<p>SSE: 服务器发送事件: <a href="http://javascript.ruanyifeng.com/htmlapi/eventsource.html" target="_blank" rel="external">http://javascript.ruanyifeng.com/htmlapi/eventsource.html</a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/HTML5/" rel="tag">#HTML5</a>
+          
+            <a href="/tags/Server-sent-Event/" rel="tag">#Server-sent-Event</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/12/02/Proxy-auto-Config/" rel="next" title="代理自动配置 Proxy auto-Config">
+                <i class="fa fa-chevron-left"></i> 代理自动配置 Proxy auto-Config
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/12/19/Nginx-ngx_http_substitutions_filter_module/" rel="prev" title="Nginx 多规则替换模块 ngx_http_substitutions_filter_module">
+                Nginx 多规则替换模块 ngx_http_substitutions_filter_module <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Server-sent-Event"><span class="nav-number">1.</span> <span class="nav-text">什么是Server-sent Event</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相似的技术对比"><span class="nav-number">2.</span> <span class="nav-text">相似的技术对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用方法"><span class="nav-number">3.</span> <span class="nav-text">使用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">4.</span> <span class="nav-text">结论</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2014/12/18/HTTP-Server-sent/';
+      var disqus_title = "为什么HTML5中的Server-sent Event没有被广泛使用";
+      var disqus_url = 'http://www.liuzhixiang.com/2014/12/18/HTTP-Server-sent/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="优化,MySQL," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="MySQL使用误区
+将MySQL作为文件存储。MySQL存储大量数据时会造成数据库性能下降，建议将文件交由文件系统处理，MySQL只存储文件的存储位置。若需要将文章内容等大量文本内容存储进数据库时建议与文章的元数据（作者、发布时间等）分表存储。
+使用MySQL存储中间数据，如游戏的中间数据。MySQL作为一个持久存储的数据库，不建议将一些频繁修改的中间数据存入MySQL，会造成MySQL压力过大。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 优化要点整理（一）">
+<meta property="og:url" content="http://www.liuzhixiang.com/2015/07/10/MySQL-Optimize-Pointer-1/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="MySQL使用误区
+将MySQL作为文件存储。MySQL存储大量数据时会造成数据库性能下降，建议将文件交由文件系统处理，MySQL只存储文件的存储位置。若需要将文章内容等大量文本内容存储进数据库时建议与文章的元数据（作者、发布时间等）分表存储。
+使用MySQL存储中间数据，如游戏的中间数据。MySQL作为一个持久存储的数据库，不建议将一些频繁修改的中间数据存入MySQL，会造成MySQL压力过大。">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL 优化要点整理（一）">
+<meta name="twitter:description" content="MySQL使用误区
+将MySQL作为文件存储。MySQL存储大量数据时会造成数据库性能下降，建议将文件交由文件系统处理，MySQL只存储文件的存储位置。若需要将文章内容等大量文本内容存储进数据库时建议与文章的元数据（作者、发布时间等）分表存储。
+使用MySQL存储中间数据，如游戏的中间数据。MySQL作为一个持久存储的数据库，不建议将一些频繁修改的中间数据存入MySQL，会造成MySQL压力过大。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2015/07/10/MySQL-Optimize-Pointer-1/"/>
+
+
+  <title> MySQL 优化要点整理（一） | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                MySQL 优化要点整理（一）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-07-10T10:32:00+08:00" content="2015-07-10">
+              2015-07-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/07/10/MySQL-Optimize-Pointer-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/07/10/MySQL-Optimize-Pointer-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="MySQL使用误区"><a href="#MySQL使用误区" class="headerlink" title="MySQL使用误区"></a>MySQL使用误区</h2><ol>
+<li>将MySQL作为文件存储。MySQL存储大量数据时会造成数据库性能下降，建议将文件交由文件系统处理，MySQL只存储文件的存储位置。若需要将文章内容等大量文本内容存储进数据库时建议与文章的元数据（作者、发布时间等）分表存储。</li>
+<li>使用MySQL存储中间数据，如游戏的中间数据。MySQL作为一个持久存储的数据库，不建议将一些频繁修改的中间数据存入MySQL，会造成MySQL压力过大。</li>
+<li>将MySQL作为搜索引擎。MySQL的全文索引性能并不好，建议使用 <code>Sphinx</code> (<code>Coreseek</code>) 、<code>Lucene</code> 或 <code>Solr</code> 等专业的全文索引引擎提供全文检索功能。</li>
+</ol>
+<h2 id="MySQL版本的选择"><a href="#MySQL版本的选择" class="headerlink" title="MySQL版本的选择"></a>MySQL版本的选择</h2><h3 id="官方版本的选择"><a href="#官方版本的选择" class="headerlink" title="官方版本的选择"></a>官方版本的选择</h3><p>MySQL5.1之前的版本对多核支持较差（可使用 <code>top</code> 命令后按 <code>1</code> 查看CPU核心的是用情况）；<br>5.1支持4个CPU核心；<br>5.5支持24个核心；<br>5.6支持64个核心。</p>
+<p>建议使用最新的稳定版。</p>
+<p>MySQL对与每一个连接使用一个线程来处理，每个并发query使用一个核心，所以应尽量让每一个query快速完成，减少后续query等待。</p>
+<h3 id="分支版本的选择"><a href="#分支版本的选择" class="headerlink" title="分支版本的选择"></a>分支版本的选择</h3><p>官方版本锁竞争严重，建议使用 <code>MariaDB</code> 或者 <code>Precona</code> 分支，当前建议使用的顺序为：</p>
+<p>Percona &gt; MariaDB &gt; 官方MySQL</p>
+<h2 id="MySQL的内存利用特点"><a href="#MySQL的内存利用特点" class="headerlink" title="MySQL的内存利用特点"></a>MySQL的内存利用特点</h2><p>MySQL对于内存的使用分为全局内存块和session（会话）内存块。</p>
+<p>PGA（程序全局区，Program Global Area，每个会话分配的内存）不宜过大，会造成OOM（out of memory）。</p>
+<p>可通过增加物理内存降低系统IO，提高并发性能。<br>一些存储引擎也会将锁放入物理内存中。</p>
+<p>query cache (查询缓存) 管理机制糟糕，不建议使用，直接关闭。原因是query cache存在全局锁，任何数据变更都会导致cache失效。</p>
+<p>与Oracle不同的是，MySQL没有执行计划缓存，原因是MySQL的查询解析器非常精简、高效，无需缓存。</p>
+<p>硬件方面的内存分配大概为热点数据的 15%~20%，MySQL单机专用实例建议分配的内存为全部物理内存的 50%~70%（可由50%开始分配，逐步加大看内存使用）。</p>
+<p>K-V（key-value）简单数据使用 NoSQL 存储，例如 redis、memcached、mongoDB 等。</p>
+<p>redis 与 memcached 的选择建议 redis，速度更快功能更多。</p>
+<h2 id="MySQL的磁盘使用特点"><a href="#MySQL的磁盘使用特点" class="headerlink" title="MySQL的磁盘使用特点"></a>MySQL的磁盘使用特点</h2><p>binlog、redolog、undolog 主要是顺序IO。</p>
+<p>datafile 主要是随机IO，也有顺序IO。</p>
+<p>OLTP（Online Transactions Processing，联机事务处理）已随机IO为主，建议加大物理内存（合并随机IO为顺序IO）。</p>
+<p>OLAP（Online Analysis Processing，联机分析）已顺序IO为主，建议加大内存、增加硬盘数量提高顺序IO性能。</p>
+<p>MyISAM是堆组织表（Heap Organize Table，HOT），存储时直接写在数据尾部。</p>
+<blockquote>
+<p>堆组织表中，数据以堆的方式管理。增加数据时，会使用段中找到的第一个能放下此数据的自由空间。从表中删除数据后，允许以后的INSERT和UPDATE重用这部分空间。堆（heap）是一组空间，以一种随机的方式使用。因此，无法保证按照放入表中的顺序取得数据​。</p>
+</blockquote>
+<p>InnoDB是索引组织表（Index Organize Table，IOT），使用B+树进行数据组织。</p>
+<blockquote>
+<p> 索引组织表(IOT)不仅可以存储数据，还可以存储为表建立的索引。索引组织表的数据是根据主键排序后的顺序进行排列的，这样就提高了访问的速度。但是这是由牺牲插入和更新性能为代价的(每次写入和更新后都要重新进行重新排序)。</p>
+</blockquote>
+<p>InnoDB会比MyISAM消耗更多的磁盘控件一般会消耗1.5~2）​倍。</p>
+<p>InnoDB基于主键的查找会比MyISAM快。MyISAM的索引与数据是分开的，所以要读取两次。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/优化/" rel="tag">#优化</a>
+          
+            <a href="/tags/MySQL/" rel="tag">#MySQL</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/07/01/Node.js-Interview-Questions-and-Answers/" rel="next" title="Node.js 常见面试题">
+                <i class="fa fa-chevron-left"></i> Node.js 常见面试题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/07/22/MySQL-Optimize-Pointer-2/" rel="prev" title="MySQL 优化要点整理（二）">
+                MySQL 优化要点整理（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL使用误区"><span class="nav-number">1.</span> <span class="nav-text">MySQL使用误区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL版本的选择"><span class="nav-number">2.</span> <span class="nav-text">MySQL版本的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#官方版本的选择"><span class="nav-number">2.1.</span> <span class="nav-text">官方版本的选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分支版本的选择"><span class="nav-number">2.2.</span> <span class="nav-text">分支版本的选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL的内存利用特点"><span class="nav-number">3.</span> <span class="nav-text">MySQL的内存利用特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL的磁盘使用特点"><span class="nav-number">4.</span> <span class="nav-text">MySQL的磁盘使用特点</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2015/07/10/MySQL-Optimize-Pointer-1/';
+      var disqus_title = "MySQL 优化要点整理（一）";
+      var disqus_url = 'http://www.liuzhixiang.com/2015/07/10/MySQL-Optimize-Pointer-1/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

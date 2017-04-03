@@ -1,0 +1,755 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="GEO,Distance,地理空间,优化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="直接SQL方式表结构1234567CREATE TABLE `go_goods_coordinate` (  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,  `lat` float NOT NULL COMMENT &apos;纬度&apos;,  `lng` float NOT NULL COMMENT &apos;经度&apos;,  PRIMARY KEY (`id`),  KEY">
+<meta property="og:type" content="article">
+<meta property="og:title" content="地理空间距离计算">
+<meta property="og:url" content="http://www.liuzhixiang.com/2015/12/08/GEO-Distance-Calculation/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="直接SQL方式表结构1234567CREATE TABLE `go_goods_coordinate` (  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,  `lat` float NOT NULL COMMENT &apos;纬度&apos;,  `lng` float NOT NULL COMMENT &apos;经度&apos;,  PRIMARY KEY (`id`),  KEY">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="地理空间距离计算">
+<meta name="twitter:description" content="直接SQL方式表结构1234567CREATE TABLE `go_goods_coordinate` (  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,  `lat` float NOT NULL COMMENT &apos;纬度&apos;,  `lng` float NOT NULL COMMENT &apos;经度&apos;,  PRIMARY KEY (`id`),  KEY">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2015/12/08/GEO-Distance-Calculation/"/>
+
+
+  <title> 地理空间距离计算 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                地理空间距离计算
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-12-08T11:32:12+08:00" content="2015-12-08">
+              2015-12-08
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/地理空间距离计算/" itemprop="url" rel="index">
+                    <span itemprop="name">地理空间距离计算</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/12/08/GEO-Distance-Calculation/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/12/08/GEO-Distance-Calculation/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="直接SQL方式"><a href="#直接SQL方式" class="headerlink" title="直接SQL方式"></a>直接SQL方式</h3><h4 id="表结构"><a href="#表结构" class="headerlink" title="表结构"></a>表结构</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`go_goods_coordinate`</span> (</div><div class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">10</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</div><div class="line">  <span class="string">`lat`</span> <span class="built_in">float</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'纬度'</span>,</div><div class="line">  <span class="string">`lng`</span> <span class="built_in">float</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'经度'</span>,</div><div class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>),</div><div class="line">  <span class="keyword">KEY</span> <span class="string">`lat,lng`</span> (<span class="string">`lat`</span>,<span class="string">`lng`</span>)</div><div class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</div></pre></td></tr></table></figure>
+<h4 id="准备测试数据"><a href="#准备测试数据" class="headerlink" title="准备测试数据"></a>准备测试数据</h4><p>使用下面的PHP脚本建立基础数据 100W条<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">$pdo = <span class="keyword">new</span> PDO(<span class="string">'mysql:dbname=test;host=192.168.184.1'</span>, <span class="string">'root'</span>, <span class="string">''</span>, <span class="keyword">array</span>(</div><div class="line">    PDO::MYSQL_ATTR_INIT_COMMAND =&gt; <span class="string">'SET NAMES UTF8'</span>,</div><div class="line">));</div><div class="line"></div><div class="line">$length = <span class="number">1000000</span>;</div><div class="line"></div><div class="line">$startDate = microtime(<span class="keyword">true</span>);</div><div class="line"><span class="keyword">echo</span> $startDate.PHP_EOL;</div><div class="line"></div><div class="line">$pdo-&gt;beginTransaction();</div><div class="line"><span class="keyword">for</span>($i = <span class="number">0</span>; $i &lt; $length; $i ++)&#123;</div><div class="line">    $lat = mt_rand(<span class="number">3000000</span>, <span class="number">60000000</span>) / <span class="number">1000000.0</span>;</div><div class="line">    $lng = mt_rand(<span class="number">72000000</span>, <span class="number">136000000</span>) / <span class="number">1000000.0</span>;</div><div class="line">    $statement = $pdo-&gt;prepare(<span class="string">"INSERT INTO go_goods_coordinate(lat, lng) VALUES(?, ?)"</span>);</div><div class="line">    $success = $statement-&gt;execute(<span class="keyword">array</span>($lat, $lng));</div><div class="line">    <span class="keyword">if</span>(! $success)&#123;</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>($i % <span class="number">10000</span> == <span class="number">0</span>)&#123;</div><div class="line">        <span class="keyword">echo</span> <span class="string">'inserted 10000 records.'</span>.PHP_EOL;</div><div class="line">        sleep(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">$pdo-&gt;commit();</div><div class="line">$endDate = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">echo</span> $endDate.PHP_EOL;</div><div class="line"><span class="keyword">echo</span> ($endDate - $startDate).PHP_EOL;</div></pre></td></tr></table></figure></p>
+<h4 id="SQL查询方式-查询10km内的离我（lat-50-lng-100）最近的点前25个"><a href="#SQL查询方式-查询10km内的离我（lat-50-lng-100）最近的点前25个" class="headerlink" title="SQL查询方式(查询10km内的离我（lat: 50, lng : 100）最近的点前25个)"></a>SQL查询方式(查询10km内的离我（lat: 50, lng : 100）最近的点前25个)</h4><p>此种方式由球面距离公式计算点距离，为减少计算与排序的数据量，使用距离估算方式由添加了索引的lat,lng列进行距离估算；另外一种方式是根据GEOHASH估算。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SET</span> @lat = <span class="number">50</span>;</div><div class="line"><span class="keyword">SET</span> @lng = <span class="number">100</span>;</div><div class="line"><span class="keyword">SET</span> @<span class="keyword">row</span> = <span class="number">1</span>;</div><div class="line"></div><div class="line"><span class="keyword">SELECT</span></div><div class="line">  @<span class="keyword">row</span> := @<span class="keyword">row</span> + <span class="number">1</span> <span class="keyword">AS</span> row_id, ggc.*, @lat,</div><div class="line">  <span class="number">12756274</span> * <span class="keyword">ASIN</span>(</div><div class="line">    <span class="keyword">SQRT</span>(</div><div class="line">      <span class="keyword">POWER</span>(<span class="keyword">SIN</span>((@lat - ggc.lat) * <span class="number">0.008726646</span>), <span class="number">2</span>) + <span class="keyword">COS</span>(@lat * <span class="number">0.0174533</span>) * <span class="keyword">COS</span>(ggc.lat * <span class="number">0.0174533</span>) * <span class="keyword">POWER</span>(<span class="keyword">SIN</span>((@lng - ggc.lng) * <span class="number">0.008726646</span>), <span class="number">2</span>)</div><div class="line">    )</div><div class="line">  ) <span class="keyword">AS</span> <span class="keyword">len</span> </div><div class="line"><span class="keyword">FROM</span></div><div class="line">  go_goods_coordinate <span class="keyword">AS</span> ggc </div><div class="line"><span class="keyword">WHERE</span></div><div class="line">  ggc.lat &lt; @lat + <span class="number">0.1</span></div><div class="line">  <span class="keyword">AND</span> ggc.lat &gt; @lat - <span class="number">0.1</span></div><div class="line">  <span class="keyword">AND</span> ggc.lng &lt; @lng + <span class="number">0.1</span></div><div class="line">  <span class="keyword">AND</span> ggc.lng &gt; @lng - <span class="number">0.1</span></div><div class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">len</span> <span class="keyword">ASC</span></div><div class="line"><span class="keyword">LIMIT</span> <span class="number">25</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">返回了 16 行</div><div class="line"></div><div class="line">执行耗时   : 0.007 sec</div><div class="line">传送时间   : 0 sec</div><div class="line">总耗时      : 0.007 sec</div></pre></td></tr></table></figure>
+<p>SQL的EXPLAIN结果显示</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>select_type</th>
+<th>table</th>
+<th>type</th>
+<th>possible_keys</th>
+<th>key</th>
+<th>key_len</th>
+<th>ref</th>
+<th>rows</th>
+<th>Extra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SIMPLE</td>
+<td>ggc</td>
+<td>range</td>
+<td>lat,lng</td>
+<td>lat,lng</td>
+<td>8</td>
+<td>(NULL)</td>
+<td>3654</td>
+<td>Using where; Using index; Using filesort</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用Sphinx"><a href="#使用Sphinx" class="headerlink" title="使用Sphinx"></a>使用Sphinx</h3><h4 id="Sphinx配置"><a href="#Sphinx配置" class="headerlink" title="Sphinx配置"></a>Sphinx配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">source go_goods_coordinate</div><div class="line">&#123;</div><div class="line">        type                    = mysql</div><div class="line"></div><div class="line">        sql_host                = 192.168.184.1</div><div class="line">        sql_user                = root</div><div class="line">        sql_pass                =</div><div class="line">        sql_db                  = test</div><div class="line">        sql_port                = 3306  # optional, default is 3306</div><div class="line"></div><div class="line">        sql_query               = \</div><div class="line">                SELECT id, lat, lng, RADIANS(lat) AS r_lat, RADIANS(lng) AS r_lng \</div><div class="line">                FROM go_goods_coordinate \</div><div class="line">                WHERE id &gt; $start AND id &lt; $end</div><div class="line">        sql_query_range         = SELECT MIN(id), MAX(id) FROM go_goods_coordinate</div><div class="line">        sql_range_step          = 10000</div><div class="line"></div><div class="line">        sql_attr_float          = r_lat</div><div class="line">        sql_attr_float          = r_lng</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">index go_goods_coordinate</div><div class="line">&#123;</div><div class="line">        source                  = go_goods_coordinate</div><div class="line">        path                    = /var/lib/sphinx/go_goods_coordinate</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">indexer</div><div class="line">&#123;</div><div class="line">        mem_limit               = 128M</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">searchd</div><div class="line">&#123;</div><div class="line">        listen                  = 9312</div><div class="line">        listen                  = 9306:mysql41</div><div class="line">        log                     = /var/log/sphinx/searchd.log</div><div class="line">        query_log               = /var/log/sphinx/query.log</div><div class="line">        read_timeout            = 5</div><div class="line">        max_children            = 30</div><div class="line">        pid_file                = /var/run/sphinx/searchd.pid</div><div class="line">        seamless_rotate         = 1</div><div class="line">        preopen_indexes         = 1</div><div class="line">        unlink_old              = 1</div><div class="line">        workers                 = threads # for RT to work</div><div class="line">        binlog_path             = /var/lib/sphinx/</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>建立索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"># indexer --all </div><div class="line">Sphinx 2.2.10-id64-release (2c212e0)</div><div class="line">Copyright (c) 2001-2015, Andrew Aksyonoff</div><div class="line">Copyright (c) 2008-2015, Sphinx Technologies Inc (http://sphinxsearch.com)</div><div class="line"></div><div class="line">using config file &apos;/etc/sphinx/sphinx.conf&apos;...</div><div class="line">indexing index &apos;go_goods_coordinate&apos;...</div><div class="line">collected 999800 docs, 13.8 MB</div><div class="line">sorted 4.0 Mhits, 100.0% done</div><div class="line">total 999800 docs, 13774146 bytes</div><div class="line">total 6.741 sec, 2043205 bytes/sec, 148306.59 docs/sec</div><div class="line">total 5 reads, 0.029 sec, 7965.8 kb/call avg, 5.9 msec/call avg</div><div class="line">total 58 writes, 0.051 sec, 1282.8 kb/call avg, 0.8 msec/call avg</div></pre></td></tr></table></figure>
+<p>启动searchd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># searchd</div></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">$lat = <span class="number">50</span>;</div><div class="line">$lng = <span class="number">100</span>;</div><div class="line">$r_lat = deg2rad($lat);</div><div class="line">$r_lng = deg2rad($lng);</div><div class="line">$circle = <span class="number">100000000.0</span>;</div><div class="line"></div><div class="line"><span class="keyword">include</span> <span class="string">'../sphinxapi.php'</span>;</div><div class="line"></div><div class="line">$sphinx = <span class="keyword">new</span> SphinxClient();</div><div class="line">$sphinx-&gt;SetServer(<span class="string">'127.0.0.1'</span>, <span class="number">9312</span>);</div><div class="line">$sphinx-&gt;SetConnectTimeout(<span class="number">3</span>);</div><div class="line">$sphinx-&gt;SetArrayResult(<span class="keyword">true</span>);</div><div class="line">$sphinx-&gt;SetLimits(<span class="number">0</span>, <span class="number">2500</span>);</div><div class="line">$sphinx-&gt;SetGeoAnchor(<span class="string">'r_lat'</span>, <span class="string">'r_lng'</span>, $r_lat, $r_lng);</div><div class="line">$sphinx-&gt;SetFilterFloatRange(<span class="string">'@geodist'</span>, <span class="number">0.0</span>, $circle);</div><div class="line">$sphinx-&gt;SetSortMode(SPH_SORT_ATTR_ASC, <span class="string">'@geodist'</span>);</div><div class="line">$sphinx-&gt;SetSelect(<span class="string">'id, r_lat, r_lng'</span>);</div><div class="line">$res = $sphinx-&gt;Query(<span class="string">""</span>, <span class="string">'go_goods_coordinate'</span>);</div><div class="line"></div><div class="line"><span class="keyword">echo</span> <span class="string">'matches: '</span>.count($res[<span class="string">'matches'</span>]).PHP_EOL;</div><div class="line"></div><div class="line">print_r($res[<span class="string">'matches'</span>][<span class="number">0</span>][<span class="string">'attrs'</span>]);</div><div class="line"></div><div class="line"><span class="keyword">echo</span> $res[<span class="string">'matches'</span>][<span class="number">0</span>][<span class="string">'attrs'</span>][<span class="string">'b_lat'</span>] * <span class="number">180</span> / pi().PHP_EOL;</div><div class="line"><span class="keyword">echo</span> $res[<span class="string">'matches'</span>][<span class="number">0</span>][<span class="string">'attrs'</span>][<span class="string">'b_lng'</span>] * <span class="number">180</span> / pi().PHP_EOL;</div><div class="line"></div><div class="line">print_r($res);</div></pre></td></tr></table></figure>
+<p>由查询数的 <code>$res</code> 看到查询时间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[time] =&gt; 0.166</div></pre></td></tr></table></figure>
+<p>反复调整查询范围 <code>$circle</code> 查询时间都在100~200ms之间，可以得出结论sphinx内部没有对范围查询做优化。</p>
+<p>由<a href="http://sphinxsearch.com/blog/2013/07/02/geo-distances-with-sphinx/" target="_blank" rel="external">sphinx官方的文档</a>可以看出，sphinx使用的也是球面距离算法（haversine algorithm）。</p>
+<p>由<a href="https://github.com/sphinxsearch/sphinx/blob/master/src/sphinxexpr.cpp#L3472" target="_blank" rel="external">sphinx源码</a>中可以看出，对距离较近的点sphinx采用了另外的算法。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">float</span> <span class="title">GeodistAdaptiveDeg</span> <span class="params">( <span class="keyword">float</span> lat1, <span class="keyword">float</span> lon1, <span class="keyword">float</span> lat2, <span class="keyword">float</span> lon2 )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">float</span> dlat = GeodistDegDiff ( lat1-lat2 );</div><div class="line">	<span class="keyword">float</span> dlon = GeodistDegDiff ( lon1-lon2 );</div><div class="line"></div><div class="line">	<span class="keyword">if</span> ( dlon&lt;<span class="number">13</span> )</div><div class="line">	&#123;</div><div class="line">		<span class="comment">// points are close enough; use flat ellipsoid model</span></div><div class="line">		<span class="comment">// interpolate sqr(k1), sqr(k2) coefficients using latitudes midpoint</span></div><div class="line">		<span class="keyword">float</span> m = ( lat1+lat2+<span class="number">180</span> )*GEODIST_TABLE_K/<span class="number">360</span>; <span class="comment">// [-90, 90] degrees -&gt; [0, KTABLE] indexes</span></div><div class="line">		<span class="keyword">int</span> i = <span class="keyword">int</span>(m);</div><div class="line">		i &amp;= ( GEODIST_TABLE_K<span class="number">-1</span> );</div><div class="line">		<span class="keyword">float</span> kk1 = g_GeoFlatK[i][<span class="number">0</span>] + ( g_GeoFlatK[i+<span class="number">1</span>][<span class="number">0</span>] - g_GeoFlatK[i][<span class="number">0</span>] )*( m-i );</div><div class="line">		<span class="keyword">float</span> kk2 = g_GeoFlatK[i][<span class="number">1</span>] + ( g_GeoFlatK[i+<span class="number">1</span>][<span class="number">1</span>] - g_GeoFlatK[i][<span class="number">1</span>] )*( m-i );</div><div class="line">		<span class="keyword">return</span> (<span class="keyword">float</span>)<span class="built_in">sqrt</span> ( kk1*dlat*dlat + kk2*dlon*dlon );</div><div class="line">	&#125; <span class="keyword">else</span></div><div class="line">	&#123;</div><div class="line">		<span class="comment">// points too far away; use haversine</span></div><div class="line">		<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">float</span> D = <span class="number">2</span>*<span class="number">6371000</span>;</div><div class="line">		<span class="keyword">float</span> a = fsqr ( GeodistFastSin ( dlat*TO_RADF2 ) ) + GeodistFastCos ( lat1*TO_RADF ) * GeodistFastCos ( lat2*TO_RADF ) * fsqr ( GeodistFastSin ( dlon*TO_RADF2 ) );</div><div class="line">		<span class="keyword">return</span> (<span class="keyword">float</span>)( D*GeodistFastAsinSqrt(a) );</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="使用Redis的GEO存储方式"><a href="#使用Redis的GEO存储方式" class="headerlink" title="使用Redis的GEO存储方式"></a>使用Redis的GEO存储方式</h3><p>截至此时，<a href="http://redis.io/commands/georadius" target="_blank" rel="external">Redis的GEO功能</a>还是在unstable版本中，下载安装unstable版本后对Redis进行了测试。</p>
+<h4 id="建立测试数据"><a href="#建立测试数据" class="headerlink" title="建立测试数据"></a>建立测试数据</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">require</span> <span class="string">'../vendor/autoload.php'</span>;</div><div class="line">$redis = <span class="keyword">new</span> \Predis\Client();</div><div class="line">$redis-&gt;connect();</div><div class="line">$redis-&gt;select(<span class="number">10</span>);</div><div class="line"></div><div class="line">$length = <span class="number">1000000</span>;</div><div class="line"></div><div class="line">$startDate = microtime(<span class="keyword">true</span>);</div><div class="line"><span class="keyword">echo</span> $startDate.PHP_EOL;</div><div class="line"></div><div class="line"><span class="keyword">for</span>($i = <span class="number">0</span>; $i &lt; $length; $i ++)&#123;</div><div class="line">    $lat = mt_rand(<span class="number">3000000</span>, <span class="number">60000000</span>) / <span class="number">1000000.0</span>;</div><div class="line">    $lng = mt_rand(<span class="number">72000000</span>, <span class="number">136000000</span>) / <span class="number">1000000.0</span>;</div><div class="line">    $id = $length + $i;</div><div class="line">    $redis-&gt;executeRaw(<span class="keyword">array</span>(<span class="string">'GEOADD'</span>, <span class="string">'go_goods_coordinate'</span>, $lng, $lat, $id));</div><div class="line">    <span class="keyword">if</span>($i % <span class="number">10000</span> == <span class="number">0</span>)&#123;</div><div class="line">        <span class="keyword">echo</span> $i.PHP_EOL;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">$endDate = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">echo</span> $endDate.PHP_EOL;</div><div class="line"><span class="keyword">echo</span> ($endDate - $startDate).PHP_EOL;</div></pre></td></tr></table></figure>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>使用以下代码测试性能</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">require</span> <span class="string">'../vendor/autoload.php'</span>;</div><div class="line">$redis = <span class="keyword">new</span> \Predis\Client();</div><div class="line">$redis-&gt;connect();</div><div class="line">$redis-&gt;select(<span class="number">10</span>);</div><div class="line">$params = <span class="keyword">array</span>(</div><div class="line">    <span class="string">'georadius'</span>,</div><div class="line">    <span class="string">'go_goods_coordinate'</span>,</div><div class="line">    <span class="string">'100'</span>,</div><div class="line">    <span class="string">'50'</span>,</div><div class="line">    <span class="string">'200'</span>,</div><div class="line">    <span class="string">'km'</span>,</div><div class="line">    <span class="string">'withdist'</span>,</div><div class="line">    <span class="string">'withhash'</span>,</div><div class="line">    <span class="string">'withcoord'</span>,</div><div class="line">    <span class="string">'count'</span>,</div><div class="line">    <span class="string">'10'</span>);</div><div class="line">$start = microtime(<span class="keyword">true</span>);</div><div class="line">$redis-&gt;executeRaw($params);</div><div class="line">$end = microtime(<span class="keyword">true</span>);</div><div class="line"><span class="keyword">echo</span> $end - $start;</div></pre></td></tr></table></figure>
+<p>耗时： 0.016094207763672 也就是大概 16ms</p>
+<p>将范围改为 20000000km 再次进行测试</p>
+<p>耗时： 0.85910105705261 也就是 859ms</p>
+<p>可见Redis内部对查询范围进行了优化，Redis使用的是GEOHASH方式进行的优化。</p>
+<p>距离计算算法Redis也是使用球面距离算法进行，可查看<a href="https://github.com/antirez/redis/blob/unstable/deps/geohash-int/geohash_helper.c#L171" target="_blank" rel="external">Redis源码</a></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Calculate distance using haversin great circle distance formula. */</span></div><div class="line"><span class="function"><span class="keyword">double</span> <span class="title">geohashGetDistance</span><span class="params">(<span class="keyword">double</span> lon1d, <span class="keyword">double</span> lat1d, <span class="keyword">double</span> lon2d, <span class="keyword">double</span> lat2d)</span> </span>&#123;</div><div class="line">    <span class="keyword">double</span> lat1r, lon1r, lat2r, lon2r, u, v;</div><div class="line">    lat1r = deg_rad(lat1d);</div><div class="line">    lon1r = deg_rad(lon1d);</div><div class="line">    lat2r = deg_rad(lat2d);</div><div class="line">    lon2r = deg_rad(lon2d);</div><div class="line">    u = <span class="built_in">sin</span>((lat2r - lat1r) / <span class="number">2</span>);</div><div class="line">    v = <span class="built_in">sin</span>((lon2r - lon1r) / <span class="number">2</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">2.0</span> * EARTH_RADIUS_IN_METERS *</div><div class="line">           <span class="built_in">asin</span>(<span class="built_in">sqrt</span>(u * u + <span class="built_in">cos</span>(lat1r) * <span class="built_in">cos</span>(lat2r) * v * v));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>对于以上三种方式，对于距离的计算都有优化的空间，可参考<a href="http://tech.meituan.com/lucene-distance.html" target="_blank" rel="external">美团技术博客的这篇文章</a>。</p>
+<p>使用简化的算法，并对cos进行<a href="https://zh.wikipedia.org/zh-cn/%E6%9B%B2%E7%B7%9A%E6%93%AC%E5%90%88" target="_blank" rel="external">多项式拟合</a>消除三角函数。</p>
+<p>对于Sphinx、Redis可以通过修改源码的方式进行进一步的优化</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="http://www.cnblogs.com/LBSer/p/3298057.html" target="_blank" rel="external">距离估算</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Haversine_formula" target="_blank" rel="external">球面距离公式</a></p>
+<p><a href="http://sphinxsearch.com/blog/2013/07/02/geo-distances-with-sphinx/" target="_blank" rel="external">sphinx document</a></p>
+<p><a href="https://github.com/sphinxsearch/sphinx/blob/master/src/sphinxexpr.cpp#L3472" target="_blank" rel="external">sphinx github</a></p>
+<p><a href="https://github.com/antirez/redis/blob/unstable/deps/geohash-int/geohash_helper.c#L171" target="_blank" rel="external">redis github</a></p>
+<p><a href="http://tech.meituan.com/lucene-distance.html" target="_blank" rel="external">美团技术博客</a></p>
+<p><a href="https://zh.wikipedia.org/zh-cn/%E6%9B%B2%E7%B7%9A%E6%93%AC%E5%90%88" target="_blank" rel="external">多项式拟合</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/GEO/" rel="tag">#GEO</a>
+          
+            <a href="/tags/Distance/" rel="tag">#Distance</a>
+          
+            <a href="/tags/地理空间/" rel="tag">#地理空间</a>
+          
+            <a href="/tags/优化/" rel="tag">#优化</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/23/LNMP-Optimize/" rel="next" title="LNMP 性能优化">
+                <i class="fa fa-chevron-left"></i> LNMP 性能优化
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/12/Using-HTTP2-Server-Push/" rel="prev" title="HTTP2 Server Push 使用">
+                HTTP2 Server Push 使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#直接SQL方式"><span class="nav-number">1.</span> <span class="nav-text">直接SQL方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#表结构"><span class="nav-number">1.1.</span> <span class="nav-text">表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#准备测试数据"><span class="nav-number">1.2.</span> <span class="nav-text">准备测试数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL查询方式-查询10km内的离我（lat-50-lng-100）最近的点前25个"><span class="nav-number">1.3.</span> <span class="nav-text">SQL查询方式(查询10km内的离我（lat: 50, lng : 100）最近的点前25个)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Sphinx"><span class="nav-number">2.</span> <span class="nav-text">使用Sphinx</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Sphinx配置"><span class="nav-number">2.1.</span> <span class="nav-text">Sphinx配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Redis的GEO存储方式"><span class="nav-number">3.</span> <span class="nav-text">使用Redis的GEO存储方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#建立测试数据"><span class="nav-number">3.1.</span> <span class="nav-text">建立测试数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">3.2.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">4.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2015/12/08/GEO-Distance-Calculation/';
+      var disqus_title = "地理空间距离计算";
+      var disqus_url = 'http://www.liuzhixiang.com/2015/12/08/GEO-Distance-Calculation/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

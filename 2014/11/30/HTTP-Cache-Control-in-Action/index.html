@@ -1,0 +1,743 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Cache,HTTP Header,缓存," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="使用缓存的好处
+降低服务器负载，减少带宽费用
+加快页面加载速度，提升用户体验
+
+相关的HTTP Header在HTTP 1.0 中使用的：12Request：If-Modified-Since: Tue, 02 Sep 2014 09:12:36 GMTResponse：Last-Modified: Sun, 30 Nov 2014 05:14:45 GMT
+这对HTTP头协作来控制客户端缓存是否">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP 缓存实战">
+<meta property="og:url" content="http://www.liuzhixiang.com/2014/11/30/HTTP-Cache-Control-in-Action/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="使用缓存的好处
+降低服务器负载，减少带宽费用
+加快页面加载速度，提升用户体验
+
+相关的HTTP Header在HTTP 1.0 中使用的：12Request：If-Modified-Since: Tue, 02 Sep 2014 09:12:36 GMTResponse：Last-Modified: Sun, 30 Nov 2014 05:14:45 GMT
+这对HTTP头协作来控制客户端缓存是否">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP 缓存实战">
+<meta name="twitter:description" content="使用缓存的好处
+降低服务器负载，减少带宽费用
+加快页面加载速度，提升用户体验
+
+相关的HTTP Header在HTTP 1.0 中使用的：12Request：If-Modified-Since: Tue, 02 Sep 2014 09:12:36 GMTResponse：Last-Modified: Sun, 30 Nov 2014 05:14:45 GMT
+这对HTTP头协作来控制客户端缓存是否">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2014/11/30/HTTP-Cache-Control-in-Action/"/>
+
+
+  <title> HTTP 缓存实战 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                HTTP 缓存实战
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2014-11-30T15:41:55+08:00" content="2014-11-30">
+              2014-11-30
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/11/30/HTTP-Cache-Control-in-Action/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2014/11/30/HTTP-Cache-Control-in-Action/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="使用缓存的好处"><a href="#使用缓存的好处" class="headerlink" title="使用缓存的好处"></a>使用缓存的好处</h2><ul>
+<li>降低服务器负载，减少带宽费用</li>
+<li>加快页面加载速度，提升用户体验</li>
+</ul>
+<h2 id="相关的HTTP-Header"><a href="#相关的HTTP-Header" class="headerlink" title="相关的HTTP Header"></a>相关的HTTP Header</h2><h3 id="在HTTP-1-0-中使用的："><a href="#在HTTP-1-0-中使用的：" class="headerlink" title="在HTTP 1.0 中使用的："></a>在HTTP 1.0 中使用的：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Request：If-Modified-Since: Tue, 02 Sep 2014 09:12:36 GMT</div><div class="line">Response：Last-Modified: Sun, 30 Nov 2014 05:14:45 GMT</div></pre></td></tr></table></figure>
+<p>这对HTTP头协作来控制客户端缓存是否是最新的。服务器根据资源的Last-Modified是否小于或等于请求头中的If-Modified-Since匹配来决定使用缓存还是返回新的内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Response：Expires: Sun, 30 Nov 2014 05:15:45 GMT</div></pre></td></tr></table></figure>
+<p>在直接输入地址时，若资源未到Expires指定的过期时间，则直接使用缓存，不去服务器验证。但在刷新（F5）时还是要去服务器端验证是否过期。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Pragma: no-cache</div></pre></td></tr></table></figure>
+<p>告诉浏览器不使用缓存</p>
+<p><strong>这种缓存控制的缺点是需要时间同步，若时间不同步则缓存可能不像预期的那样工作。</strong></p>
+<h3 id="在HTTP-1-1中使用的："><a href="#在HTTP-1-1中使用的：" class="headerlink" title="在HTTP 1.1中使用的："></a>在HTTP 1.1中使用的：</h3><p><code>Response：Cache-Control:</code>取值有以下几种</p>
+<p>public</p>
+<p>private</p>
+<p>public与private的区别在于代理服务器缓存的处理。public意味着每个使用代理服务器的用户看到的是相同的内容，private意味着每个使用代理服务器的用户看到的内容是不同的。所以public是代理服务器会缓存的，而private的内容代理服务器不会缓存，只有浏览器会缓存。</p>
+<p>no-cache</p>
+<p>指示浏览器不要缓存内容</p>
+<p>no-store</p>
+<p>指示浏览器既不要缓存，也不要存储，用于机密资料，防止泄漏</p>
+<p>no-transform</p>
+<p>非透明代理会对内容进行转码（如Opera Mini， UC，百度Wap搜索会对页面的内容及图像进行转码方便移动浏览器浏览，对图片进行压缩节省流量），no-transform告诉这些非透明代理不要对内容进行转码（对于医疗成像、科学数据分析、端到端认证等特别有用）。</p>
+<p>must-revalidate</p>
+<p>指示所有的缓存都必须重新验证，在这个过程中，浏览器会发送一个If-Modified-Since头。如果服务器程序验证得出当前的响应数据为最新的数 据，那么服务器应当返回一个304  Not Modified响应给客户端，否则响应数据将再次被发送到客户端。</p>
+<p>proxy-revalidate</p>
+<p>与6相同，只不过用于代理服务器缓存</p>
+<p>max-age=时间</p>
+<p>数据经过max-age设置的秒数后就会失效，相当于HTTP/1.0中的Expires头。如果在一次响应中同时设置了max-age和 Expires，那么max-age将具有较高的优先级。</p>
+<p>s-maxage=时间</p>
+<p>与8相同，只不过用户代理服务器缓存</p>
+<p>###ETag验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Request ：If-None-Match: &quot;ddb2-5021185338900&quot;</div></pre></td></tr></table></figure>
+<p>服务器根据资源的ETag是否与请求头中的If-None-Match匹配来决定使用缓存还是返回新的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Response：ETag:  &quot;ddb2-5021185338900&quot;</div></pre></td></tr></table></figure>
+<p>资源的ETag</p>
+<p><strong>如果同时存在Cache-Control和Expires，浏览器总是优先使用Cache-Control，如果没有Cache-Control才考虑Expires。</strong></p>
+<p>ETag解决了使用过期时间控制缓存的一些问题：</p>
+<ul>
+<li>服务器时间准确度的问题</li>
+<li>使用过期时间控制缓存只能控制在秒级别</li>
+<li>修改时间改变但是内容没有改变的情况</li>
+</ul>
+<h2 id="三、技巧"><a href="#三、技巧" class="headerlink" title="三、技巧"></a>三、技巧</h2><p>使用Ctrl + F5刷新可以强制不使用缓存。</p>
+<p>在浏览器中直接输入地址会直接使用缓存，F5刷新会去服务器验证文件是否是最新的。</p>
+<p>参考资料：</p>
+<blockquote>
+<p>HTTP/1.1: Header Field Definitions ：<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html" target="_blank" rel="external">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Cache/" rel="tag">#Cache</a>
+          
+            <a href="/tags/HTTP-Header/" rel="tag">#HTTP Header</a>
+          
+            <a href="/tags/缓存/" rel="tag">#缓存</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/12/01/HTML5-Application-Cache/" rel="prev" title="HTML5 应用程序缓存">
+                HTML5 应用程序缓存 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用缓存的好处"><span class="nav-number">1.</span> <span class="nav-text">使用缓存的好处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关的HTTP-Header"><span class="nav-number">2.</span> <span class="nav-text">相关的HTTP Header</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在HTTP-1-0-中使用的："><span class="nav-number">2.1.</span> <span class="nav-text">在HTTP 1.0 中使用的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在HTTP-1-1中使用的："><span class="nav-number">2.2.</span> <span class="nav-text">在HTTP 1.1中使用的：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、技巧"><span class="nav-number">3.</span> <span class="nav-text">三、技巧</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2014/11/30/HTTP-Cache-Control-in-Action/';
+      var disqus_title = "HTTP 缓存实战";
+      var disqus_url = 'http://www.liuzhixiang.com/2014/11/30/HTTP-Cache-Control-in-Action/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

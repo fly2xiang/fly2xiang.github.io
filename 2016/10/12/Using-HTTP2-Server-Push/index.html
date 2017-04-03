@@ -1,0 +1,713 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="PHP,HTTP2,Server-Push,前端," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="环境配置要使用 HTTP2 首先要安装 H2O Web 服务器。截至目前，Nginx 虽然已经支持 HTTP2，但并不支持 Server-Push。参照官网的文档安装好 H2O 服务器，我是用 CentOS 已 yum 方式安装，安装完成后配置文件默认在 /etc/h2o/h2o.conf。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP2 Server Push 使用">
+<meta property="og:url" content="http://www.liuzhixiang.com/2016/10/12/Using-HTTP2-Server-Push/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="环境配置要使用 HTTP2 首先要安装 H2O Web 服务器。截至目前，Nginx 虽然已经支持 HTTP2，但并不支持 Server-Push。参照官网的文档安装好 H2O 服务器，我是用 CentOS 已 yum 方式安装，安装完成后配置文件默认在 /etc/h2o/h2o.conf。">
+<meta property="og:image" content="http://www.liuzhixiang.com/image/http2_server_push/http2_server_push.png">
+<meta property="og:image" content="http://www.liuzhixiang.com/image/http2_server_push/http2_no_server_push.png">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP2 Server Push 使用">
+<meta name="twitter:description" content="环境配置要使用 HTTP2 首先要安装 H2O Web 服务器。截至目前，Nginx 虽然已经支持 HTTP2，但并不支持 Server-Push。参照官网的文档安装好 H2O 服务器，我是用 CentOS 已 yum 方式安装，安装完成后配置文件默认在 /etc/h2o/h2o.conf。">
+<meta name="twitter:image" content="http://www.liuzhixiang.com/image/http2_server_push/http2_server_push.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2016/10/12/Using-HTTP2-Server-Push/"/>
+
+
+  <title> HTTP2 Server Push 使用 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                HTTP2 Server Push 使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-12T16:02:32+08:00" content="2016-10-12">
+              2016-10-12
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/12/Using-HTTP2-Server-Push/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/10/12/Using-HTTP2-Server-Push/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><p>要使用 HTTP2 首先要安装 <a href="https://h2o.examp1e.net/" target="_blank" rel="external">H2O</a> Web 服务器。截至目前，Nginx 虽然已经支持 HTTP2，但并不支持 Server-Push。<br>参照<a href="https://h2o.examp1e.net/install.html" target="_blank" rel="external">官网的文档</a>安装好 H2O 服务器，我是用 CentOS 已 yum 方式安装，安装完成后配置文件默认在 <code>/etc/h2o/h2o.conf</code>。</p>
+<a id="more"></a>
+<p>修改配置如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="attr">user:</span> <span class="string">php-fpm</span></div><div class="line"><span class="attr">hosts:</span></div><div class="line">  <span class="string">"localhost:443"</span><span class="string">:</span></div><div class="line"><span class="attr">    listen:</span></div><div class="line"><span class="attr">      port:</span> <span class="number">443</span></div><div class="line"><span class="attr">      host:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></div><div class="line"><span class="attr">      ssl:</span></div><div class="line"><span class="attr">        certificate-file:</span> <span class="string">"/etc/letsencrypt/live/example.com/fullchain.pem"</span></div><div class="line"><span class="attr">        key-file:</span> <span class="string">"/etc/letsencrypt/live/example.com/privkey.pem"</span></div><div class="line"><span class="attr">    paths:</span></div><div class="line">      <span class="string">"/"</span><span class="string">:</span></div><div class="line">        <span class="string">file.dir:</span> <span class="string">/data/www/example.com/public</span></div><div class="line">        <span class="string">file.custom-handler:</span></div><div class="line"><span class="attr">          extension:</span> <span class="string">.php</span></div><div class="line">          <span class="string">fastcgi.connect:</span></div><div class="line"><span class="attr">            port:</span> <span class="string">/dev/shm/www-php-fpm.sock</span></div><div class="line"><span class="attr">            type:</span> <span class="string">unix</span></div><div class="line"><span class="attr">access-log:</span> <span class="string">/var/log/h2o/access.log</span></div><div class="line"><span class="attr">error-log:</span> <span class="string">/var/log/h2o/error.log</span></div><div class="line"><span class="attr">pid-file:</span> <span class="string">/var/run/h2o/h2o.pid</span></div></pre></td></tr></table></figure>
+<p>将 user 配置为 web 服务的用户名，配置 ssl 证书和私钥路径，配置 <code>file.custom-handler</code> 用 fastcgi 方式处理 PHP 请求。更多的配置可参考 <a href="https://h2o.examp1e.net/configure.html" target="_blank" rel="external">H2O 官网的配置章节</a></p>
+<h2 id="启动服务测试"><a href="#启动服务测试" class="headerlink" title="启动服务测试"></a>启动服务测试</h2><p>执行 <code>service h2o start</code> 启动服务，如无异常应当可以在浏览器中访问到页面了，可通过 <code>service h2o status</code> 命令查看 h2o 服务的运行情况。</p>
+<p>在服务器根目录放置 PHP 文件 http2_server_push.php :</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"></div><div class="line">$img = <span class="string">'demo.png'</span>;</div><div class="line"></div><div class="line">header(<span class="string">'Link: &lt;'</span>.$img.<span class="string">'&gt;; rel=preload; as=image'</span>, <span class="keyword">false</span>);</div><div class="line"></div><div class="line"><span class="meta">?&gt;</span></div><div class="line">&lt;html&gt;</div><div class="line">&lt;body&gt;</div><div class="line">    &lt;img src=<span class="string">"&lt;?php echo $img; ?&gt;"</span>/&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<p>PHP 通过发送一个 HTTP 头: <code>Link: &lt;demo.png&gt;; rel=preload; as=image</code> 告知 H2O 将 <code>demo.png</code> 文件 Push 到客户端。此时打开 Chrome 的 Developer Tools，在 Network Panel 看到的瀑布流如下图：</p>
+<p><img src="/image/http2_server_push/http2_server_push.png" alt="HTTP2 Server Push"></p>
+<p>可以看到这里说明为 <code>Push</code>，从 Timeline 上也可以看出 <code>demo.png</code> 在 html 页面下载完成前已经开始接收。</p>
+<p>将 PHP 文件中的 <code>header</code> 行注释掉，再次查看：</p>
+<p><img src="/image/http2_server_push/http2_no_server_push.png" alt="HTTP2 NO Server Push"></p>
+<p>可以看出并没有 Server Push。</p>
+<p>实际使用中可以在 PHP 中 html 输出之前使用正则方式提取页面中的静态资源链接，然后发送 <code>Link:</code> 头。</p>
+<p>HTTP2 带来了一些特性，推翻了之前的前端优化原则。</p>
+<ul>
+<li>长连接和头部压缩：不再需要将资源文件合并，因为头部浪费数据减少了，而且不会需要建立多次连接；</li>
+<li>多路复用：静态文件不再需要拆分到多个域名下，放在同一个域名下还可以减少建立的连接数；</li>
+<li>Server Push：不再需要将重要的静态资源内联到页面中，使用 Server Push 还可以享受到浏览器的好处。</li>
+</ul>
+<h2 id="缓存问题"><a href="#缓存问题" class="headerlink" title="缓存问题"></a>缓存问题</h2><p>由于是服务端主动推送，存在的问题是可能客户端已经存在缓存了，但服务端已经开始推送，浪费了带宽。要解决这个问题首先想到的就是浏览器在发起 html 页面请求时带上一个 Cookie，标识哪些资源已经有缓存了。H2O 提供了一个叫做 <a href="https://h2o.examp1e.net/configure/http2_directives.html#http2-casper" target="_blank" rel="external">cache-aware server-push</a> 的技术来解决，原理也是相同，只是它采用了一个压缩算法来压缩 Cookie 中的信息。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://blog.cloudflare.com/using-http-2-server-push-with-php/" target="_blank" rel="external">Using HTTP/2 Server Push with PHP</a><br><a href="https://github.com/GoogleChrome/http2-push-manifest" target="_blank" rel="external">Google Chrome http2-push-manifest</a> 创建 http2-push 静态资源列表<br><a href="https://imququ.com/post/cache-aware-server-push-in-h2o.htm" target="_blank" rel="external">H2O 中的 Cache-Aware Server Push 简介</a><br><a href="https://github.com/trogau/http2img" target="_blank" rel="external">WordPress plugin to pre-load images using HTTP/2 Server Push</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PHP/" rel="tag">#PHP</a>
+          
+            <a href="/tags/HTTP2/" rel="tag">#HTTP2</a>
+          
+            <a href="/tags/Server-Push/" rel="tag">#Server-Push</a>
+          
+            <a href="/tags/前端/" rel="tag">#前端</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/08/GEO-Distance-Calculation/" rel="next" title="地理空间距离计算">
+                <i class="fa fa-chevron-left"></i> 地理空间距离计算
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/24/RabbitMQ/" rel="prev" title="RabbitMQ 配置与使用记录">
+                RabbitMQ 配置与使用记录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境配置"><span class="nav-number">1.</span> <span class="nav-text">环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动服务测试"><span class="nav-number">2.</span> <span class="nav-text">启动服务测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存问题"><span class="nav-number">3.</span> <span class="nav-text">缓存问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2016/10/12/Using-HTTP2-Server-Push/';
+      var disqus_title = "HTTP2 Server Push 使用";
+      var disqus_url = 'http://www.liuzhixiang.com/2016/10/12/Using-HTTP2-Server-Push/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

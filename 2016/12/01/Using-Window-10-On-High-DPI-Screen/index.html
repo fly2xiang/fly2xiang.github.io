@@ -1,0 +1,713 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Windows 10,High DPI,4K 屏,DPIMangler," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="问题截至到现在（2016年末），在高分辨率屏幕（3K、4K屏幕）下使用 Windows 10 操作系统仍旧会遇到不兼容高分屏的软件，表现为字体极小或界面错乱。在网上找到了几个解决方案，经过试用能够解决问题，现在整理一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在高分屏下使用 Windows 10 操作系统">
+<meta property="og:url" content="http://www.liuzhixiang.com/2016/12/01/Using-Window-10-On-High-DPI-Screen/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="问题截至到现在（2016年末），在高分辨率屏幕（3K、4K屏幕）下使用 Windows 10 操作系统仍旧会遇到不兼容高分屏的软件，表现为字体极小或界面错乱。在网上找到了几个解决方案，经过试用能够解决问题，现在整理一下。">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在高分屏下使用 Windows 10 操作系统">
+<meta name="twitter:description" content="问题截至到现在（2016年末），在高分辨率屏幕（3K、4K屏幕）下使用 Windows 10 操作系统仍旧会遇到不兼容高分屏的软件，表现为字体极小或界面错乱。在网上找到了几个解决方案，经过试用能够解决问题，现在整理一下。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2016/12/01/Using-Window-10-On-High-DPI-Screen/"/>
+
+
+  <title> 在高分屏下使用 Windows 10 操作系统 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                在高分屏下使用 Windows 10 操作系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-01T16:22:32+08:00" content="2016-12-01">
+              2016-12-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/使用技巧/" itemprop="url" rel="index">
+                    <span itemprop="name">使用技巧</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/01/Using-Window-10-On-High-DPI-Screen/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/12/01/Using-Window-10-On-High-DPI-Screen/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>截至到现在（2016年末），在高分辨率屏幕（3K、4K屏幕）下使用 Windows 10 操作系统仍旧会遇到不兼容高分屏的软件，表现为字体极小或界面错乱。在网上找到了几个解决方案，经过试用能够解决问题，现在整理一下。</p>
+<a id="more"></a>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>解决方案按照推荐使用的顺序来写。</p>
+<h3 id="提取并修改-mainfest-文件"><a href="#提取并修改-mainfest-文件" class="headerlink" title="提取并修改 mainfest 文件"></a>提取并修改 mainfest 文件</h3><p>首先要做的是修改注册表，将下面的代码保存为 <code>.reg</code> 文件，然后双击导入注册表。也可以手动定位到对应的位置进行添加或修改。这一步主要是为了让软件在运行是优先使用外部的 mainfest 文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Windows Registry Editor Version 5.00</div><div class="line"></div><div class="line">[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\SideBySide]</div><div class="line">&quot;PreferExternalManifest&quot;=dword:00000001</div></pre></td></tr></table></figure>
+<p>然后下载 <a href="http://www.nirsoft.net/utils/resources_extract.html" target="_blank" rel="external">ResourcesExtract</a> 软件用于提取 exe 文件中的 mainfest 文件。</p>
+<p>下载后执行，选择 exe 文件和要保存 mainfest 文件的位置，然后勾选 mainfest 资源，其他的不选，点击 开始(start)，应该就能够提取出 mainfest 文件了。</p>
+<p>打开提取出的 mainfest 文件，可以看出这是一个 XML 文件，查找 dpiAware 这个标签，将此标签内部的值改为 false，保存。</p>
+<p>将 mainfest 文件重命名为 <code>程序名.exe.mainfest</code>，例如 Photoshop (此篇文章撰写时Photoshop已兼容高分屏下的Windows 10，此处只是举例说明) 的可执行文件为 <code>photoshop.exe</code>，则将 mainfest 重命名为 <code>photoshop.exe.mainfest</code>。</p>
+<p>最后将 mainfest 文件放到与可执行文件相同的文件夹下，此时再打开可执行程序应该就没有问题了。</p>
+<h3 id="DPIMangler-CFF-Explorer"><a href="#DPIMangler-CFF-Explorer" class="headerlink" title="DPIMangler + CFF Explorer"></a>DPIMangler + CFF Explorer</h3><p>如果上面的步骤中出错了（提取不出 mainfest 或提前出的 mainfest 文件没有 dpiAware 标签），或者最后不生效可以使用此方法。</p>
+<p>首先下载 <a href="https://github.com/GeorgeHahn/DPIMangler/releases" target="_blank" rel="external">DPIMangler</a> 和 <a href="http://www.ntcore.com/exsuite.php" target="_blank" rel="external">CFF Explorer</a> 。</p>
+<p>DPIMangler 是一个 dll 钩子，钩住了应用程序向 Windows 系统设置 DPI 的系统调用。CFF Explorer 可以修改应用程序调用系统函数的地址。</p>
+<p>首先解压 DPIMangler.zip 得到 DPIMangler.x64.dll 和 DPIMangler.x86.dll，分别对应 64 位和 32 位的应用程序，选择对应的 dll 文件，放到应用程序同一个文件夹下。</p>
+<p>然后用 CFF Explorer 打开应用程序 exe 文件，点击左侧菜单的 Import Addr，点击右侧的 Add，在弹出的文件选择框中选择上一步选择的 dll 文件。</p>
+<p>此时下方的左侧的列表框中应该出现了一些内容，全选他们，他们会出现在右侧的列表框中。</p>
+<p>最后点击 Rebuild Import Table ，提示 success 后点击菜单栏的保存按钮，提示你是否要覆盖原有文件，如果不放心可以将原来的 exe 文件备份后再保存。</p>
+<p>此时再打开可执行程序应该就没有问题了。</p>
+<h3 id="TouchZoomDesktop"><a href="#TouchZoomDesktop" class="headerlink" title="TouchZoomDesktop"></a>TouchZoomDesktop</h3><p>一个放大镜程序，比 Windows 自带的放大镜好用，如果上面两个方法都不行，建议用这个。</p>
+<h3 id="调低分辨率"><a href="#调低分辨率" class="headerlink" title="调低分辨率"></a>调低分辨率</h3><p>非常不建议调低分辨率来使用，液晶屏幕只有一个最合适的分辨率，调低分辨率等于比直接使用对应分辨率的屏幕效果还要差。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Windows 从 Vista 开始已经对高分辨率屏幕提供了支持，但由于高分辨率屏幕当时不普及和开发者不重视而被忽视掉了。这也与 Windows 本身的软件生态有关。</p>
+<p>Windows 提供了 API 让软件报告给操作系统是自己管理 DPI 缩放还是由系统缩放，但很多软件没有自己管理 DPI 缩放却又告知操作系统由自己管理DPI缩放，造成了很多DPI的适配问题。此篇文章中的前两个方式都是让应用程序不再告知操作系统，让操作系统管理DPi缩放，虽然会造成一些字体的模糊，但还是比调低分辨率来的效果好很多。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms633543(v=vs.85" target="_blank" rel="external">SetProcessDPIAware function</a>.aspx)</p>
+<p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn302122(v=vs.85" target="_blank" rel="external">SetProcessDpiAwareness function</a>.aspx)</p>
+<p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280512(v=vs.85" target="_blank" rel="external">PROCESS_DPI_AWARENESS enumeration</a>.aspx)</p>
+<p><a href="https://www.zhihu.com/question/21718976" target="_blank" rel="external">在高分屏下使用windows，你有哪些经验？</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Windows-10/" rel="tag">#Windows 10</a>
+          
+            <a href="/tags/High-DPI/" rel="tag">#High DPI</a>
+          
+            <a href="/tags/4K-屏/" rel="tag">#4K 屏</a>
+          
+            <a href="/tags/DPIMangler/" rel="tag">#DPIMangler</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/24/RabbitMQ/" rel="next" title="RabbitMQ 配置与使用记录">
+                <i class="fa fa-chevron-left"></i> RabbitMQ 配置与使用记录
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/03/PHP-spl_object_hash-Process/" rel="prev" title="PHP spl_object_hash 多进程程序">
+                PHP spl_object_hash 多进程程序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#提取并修改-mainfest-文件"><span class="nav-number">2.1.</span> <span class="nav-text">提取并修改 mainfest 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DPIMangler-CFF-Explorer"><span class="nav-number">2.2.</span> <span class="nav-text">DPIMangler + CFF Explorer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TouchZoomDesktop"><span class="nav-number">2.3.</span> <span class="nav-text">TouchZoomDesktop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调低分辨率"><span class="nav-number">2.4.</span> <span class="nav-text">调低分辨率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2016/12/01/Using-Window-10-On-High-DPI-Screen/';
+      var disqus_title = "在高分屏下使用 Windows 10 操作系统";
+      var disqus_url = 'http://www.liuzhixiang.com/2016/12/01/Using-Window-10-On-High-DPI-Screen/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

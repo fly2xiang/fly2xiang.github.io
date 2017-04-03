@@ -1,0 +1,735 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="代理," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="简介代理自动配置（PAC）是一种浏览器技术，它用来告诉浏览器如何选择适当的代理服务器。
+简单使用在IE浏览器中可以在“Internet 选项” -&amp;gt; “连接”选项卡 -&amp;gt; “局域网设置”中看到：
+
+PAC一般使用一个proxy.pac文件作为配置，若使用http服务器提供pac文件，建议使用的MIME是application/x-ns-proxy-autoconfig。
+pac文件中其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代理自动配置 Proxy auto-Config">
+<meta property="og:url" content="http://www.liuzhixiang.com/2014/12/02/Proxy-auto-Config/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="简介代理自动配置（PAC）是一种浏览器技术，它用来告诉浏览器如何选择适当的代理服务器。
+简单使用在IE浏览器中可以在“Internet 选项” -&amp;gt; “连接”选项卡 -&amp;gt; “局域网设置”中看到：
+
+PAC一般使用一个proxy.pac文件作为配置，若使用http服务器提供pac文件，建议使用的MIME是application/x-ns-proxy-autoconfig。
+pac文件中其">
+<meta property="og:image" content="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/pac.png">
+<meta property="og:updated_time" content="2017-04-03T04:42:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代理自动配置 Proxy auto-Config">
+<meta name="twitter:description" content="简介代理自动配置（PAC）是一种浏览器技术，它用来告诉浏览器如何选择适当的代理服务器。
+简单使用在IE浏览器中可以在“Internet 选项” -&amp;gt; “连接”选项卡 -&amp;gt; “局域网设置”中看到：
+
+PAC一般使用一个proxy.pac文件作为配置，若使用http服务器提供pac文件，建议使用的MIME是application/x-ns-proxy-autoconfig。
+pac文件中其">
+<meta name="twitter:image" content="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/pac.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2014/12/02/Proxy-auto-Config/"/>
+
+
+  <title> 代理自动配置 Proxy auto-Config | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                代理自动配置 Proxy auto-Config
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2014-12-02T11:28:23+08:00" content="2014-12-02">
+              2014-12-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/网络代理/" itemprop="url" rel="index">
+                    <span itemprop="name">网络代理</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/12/02/Proxy-auto-Config/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2014/12/02/Proxy-auto-Config/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>代理自动配置（PAC）是一种浏览器技术，它用来告诉浏览器如何选择适当的代理服务器。</p>
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>在IE浏览器中可以在“Internet 选项” -&gt; “连接”选项卡 -&gt; “局域网设置”中看到：</p>
+<p><img src="https://github.com/fly2xiang/fly2xiang_blog/raw/master/images/pac.png" alt=""></p>
+<p>PAC一般使用一个proxy.pac文件作为配置，若使用http服务器提供pac文件，建议使用的MIME是<code>application/x-ns-proxy-autoconfig</code>。</p>
+<p>pac文件中其实是javascript代码，其中包含一个重要的函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">FindProxyForURL</span>(<span class="params">url, host</span>);</span></div></pre></td></tr></table></figure>
+<p>浏览器会将请求的URL与主机名传入到这个函数进行查询，函数FindProxyForURL返回一个包含代理服务器信息的字符串，浏览器根据这个字符串使用对应的代理服务器链接网络。</p>
+<p>一个简单的pac文件如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">FindProxyForURL</span>(<span class="params">url, host</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY proxy.example.com:8080; DIRECT"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这个文件中，所有的网络访问都会使用<code>proxy.example.com:8080</code>代理，若这个代理不可用，则会直接连接（DIRECT）。</p>
+<h2 id="函数列表"><a href="#函数列表" class="headerlink" title="函数列表"></a>函数列表</h2><p>在pac文件中可以使用的其他javascript函数如下：</p>
+<p><code>dnsDomainIs</code> 若host匹配google.com例如map.google.com等，则直接连接：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (dnsDomainIs(host, <span class="string">".google.com"</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>shExpMatch</code> 若url以.local结尾或在domain.com/folder/目录下则直接连接：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (shExpMatch(url, <span class="string">"*.local"</span>) || shExpMatch(url, <span class="string">"http://domain.com/folder/*"</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>dnsResolve</code> DNS反查IP：</p>
+<p><code>isInNet</code> 若IP在127.16.0.0/12子网内则直接访问：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (isInNet(dnsResolve(host), <span class="string">"172.16.0.0"</span>, <span class="string">"255.240.0.0"</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>myIpAddress</code> 返回我当前的IP</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (isInNet(myIpAddress(), <span class="string">"10.10.1.0"</span>, <span class="string">"255.255.255.0"</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY 10.10.5.1:8080"</span>;</div></pre></td></tr></table></figure>
+<p><code>isPlainHostName</code> 若host中不包含“.”则直接访问：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (isPlainHostName(host))</div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>localHostOrDomainIs</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (localHostOrDomainIs(host, <span class="string">"www.google.com"</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>isResolvable</code> 若DNS可以被反查则使用代理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (isResolvable(host))</div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY proxy1.example.com:8080"</span>;</div></pre></td></tr></table></figure>
+<p><code>dnsDomainLevels</code> host中“.”的个数大于0则使用代理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (dnsDomainLevels(host) &gt; <span class="number">0</span>)</div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY proxy1.example.com:8080"</span>;</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>weekdayRange</code> 周一到周五使用代理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (weekdayRange(<span class="string">"MON"</span>, <span class="string">"FRI"</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY proxy1.example.com:8080"</span>;</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>dateRange</code> 一月到三月使用代理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (dateRange(<span class="string">"JAN"</span>, <span class="string">"MAR"</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY proxy1.example.com:8080"</span>;</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>timeRange</code> 8:00到18:00使用代理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (timeRange(<span class="number">8</span>, <span class="number">18</span>))</div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY proxy1.example.com:8080"</span>;</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div></pre></td></tr></table></figure>
+<p><code>alert</code> 函数并没有在PAC规范中指定，但IE与FireFox是支持的，用于调试：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">resolved_host = dnsResolve(host);</div><div class="line">alert(resolved_host);</div></pre></td></tr></table></figure>
+<h2 id="高级应用"><a href="#高级应用" class="headerlink" title="高级应用"></a>高级应用</h2><p>一个复杂的pac文件示例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">FindProxyForURL</span>(<span class="params">url, host</span>) </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">// 一些不使用代理的域名</span></div><div class="line">    <span class="keyword">if</span> (dnsDomainIs(host, <span class="string">".intranet.domain.com"</span>) || shExpMatch(host, <span class="string">"(*.abcdomain.com|abcdomain.com)"</span>))</div><div class="line">        <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 对于FTP和abcdomain.com/folder/下的请求不使用代理</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> (url.substring(<span class="number">0</span>, <span class="number">4</span>)==<span class="string">"ftp:"</span> || shExpMatch(url, <span class="string">"http://abcdomain.com/folder/*"</span>))</div><div class="line">        <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 局域网中的访问不使用代理</span></div><div class="line">    <span class="keyword">if</span> (isPlainHostName(host) ||</div><div class="line">        shExpMatch(host, <span class="string">"*.local"</span>) ||</div><div class="line">        isInNet(dnsResolve(host), <span class="string">"10.0.0.0"</span>, <span class="string">"255.0.0.0"</span>) ||</div><div class="line">        isInNet(dnsResolve(host), <span class="string">"172.16.0.0"</span>, <span class="string">"255.240.0.0"</span>) ||</div><div class="line">        isInNet(dnsResolve(host), <span class="string">"192.168.0.0"</span>, <span class="string">"255.255.0.0"</span>) ||</div><div class="line">        isInNet(dnsResolve(host), <span class="string">"127.0.0.0"</span>, <span class="string">"255.255.255.0"</span>))</div><div class="line">        <span class="keyword">return</span> <span class="string">"DIRECT"</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 如果我当前的IP地址在10.10.5.0/24子网内则使用代理</span></div><div class="line">    <span class="keyword">if</span> (isInNet(myIpAddress(), <span class="string">"10.10.5.0"</span>, <span class="string">"255.255.255.0"</span>))</div><div class="line">        <span class="keyword">return</span> <span class="string">"PROXY 1.2.3.4:8080"</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 默认的，使用下面的两个代理做负载均衡</span></div><div class="line">    <span class="keyword">return</span> <span class="string">"PROXY 4.5.6.7:8080; PROXY 7.8.9.10:8080"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>有些浏览器，例如Firefox和Internet Explorer只支持系统缺省编码的PAC文件，不支持Unicode编码的PAC文件，例如UTF-8编码的PAC文件。</p>
+<p><strong>函数dnsResolv(及其他类似函数)在执行DNS查询时，如果DNS服务器没有回应，这个会导致你的浏览器被阻塞很长时间。</strong></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/代理/" rel="tag">#代理</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/12/01/Linux-screen-Command/" rel="next" title="Linux screen 命令">
+                <i class="fa fa-chevron-left"></i> Linux screen 命令
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/12/18/HTTP-Server-sent/" rel="prev" title="为什么HTML5中的Server-sent Event没有被广泛使用">
+                为什么HTML5中的Server-sent Event没有被广泛使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单使用"><span class="nav-number">2.</span> <span class="nav-text">简单使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数列表"><span class="nav-number">3.</span> <span class="nav-text">函数列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级应用"><span class="nav-number">4.</span> <span class="nav-text">高级应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">5.</span> <span class="nav-text">注意事项</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2014/12/02/Proxy-auto-Config/';
+      var disqus_title = "代理自动配置 Proxy auto-Config";
+      var disqus_url = 'http://www.liuzhixiang.com/2014/12/02/Proxy-auto-Config/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
