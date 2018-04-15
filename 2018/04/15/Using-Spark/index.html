@@ -1,0 +1,738 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="fly2xiang's site" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="title: “Spark 2.3.0 安装使用入门”date: 2018-04-14 21:20:17tags:
+
+Hadoop
+大数据
+Sparkcategories: 
+大数据
+
+概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
+
+调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；
+计算慢，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fly2xiang's site">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/15/Using-Spark/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="title: “Spark 2.3.0 安装使用入门”date: 2018-04-14 21:20:17tags:
+
+Hadoop
+大数据
+Sparkcategories: 
+大数据
+
+概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
+
+调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；
+计算慢，">
+<meta property="og:updated_time" content="2018-04-15T14:44:17.761Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fly2xiang's site">
+<meta name="twitter:description" content="title: “Spark 2.3.0 安装使用入门”date: 2018-04-14 21:20:17tags:
+
+Hadoop
+大数据
+Sparkcategories: 
+大数据
+
+概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
+
+调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；
+计算慢，">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/15/Using-Spark/"/>
+
+
+  <title>  | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-04-15T22:44:17+08:00" content="2018-04-15">
+              2018-04-15
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/04/15/Using-Spark/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/15/Using-Spark/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>title: “Spark 2.3.0 安装使用入门”<br>date: 2018-04-14 21:20:17<br>tags:</p>
+<ul>
+<li>Hadoop</li>
+<li>大数据</li>
+<li>Spark<br>categories: </li>
+<li>大数据</li>
+</ul>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题</p>
+<ul>
+<li>调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；</li>
+<li>计算慢，每一步都要保存中间结果到磁盘，相比 Spark 使用内存缓存中间结果较为耗时；</li>
+<li>使用复杂，只提供 Map/Reduce 两种形式，相比 Spark 提供 flatMap、join、group 等难以使用；</li>
+<li>缺乏作业流管理，多步任务需要多次 MapReduce，相比 Spark 提供 DAG 图管理作业流较为复杂。</li>
+</ul>
+<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>在 <a href="https://spark.apache.org" target="_blank" rel="external">Spark 官网</a> 下载安装包，这里选择 <code>2.3.0 (Feb 28 2018)</code> 和 <code>Pre-build with user-provided Apache Hadoop</code>，也就是 <code>spark-2.3.0-bin-without-hadoop.tgz</code>。使用之前安装的 Hadoop。</p>
+<p>解压</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">tar zxvf spark-2.3.0-bin-without-hadoop.tgz </div><div class="line">ln <span class="_">-s</span> spark-2.3.0-bin-without-hadoop spark</div><div class="line"><span class="built_in">cd</span> spark</div></pre></td></tr></table></figure>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>使用已经安装的 Hadoop 需要编辑 <code>conf/spark-env.sh</code> 文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> conf</div><div class="line">cp spark-env.sh.template spark-env.sh</div></pre></td></tr></table></figure>
+<p>因为我将 <code>hadoop</code> 命令添加到了 <code>PATH</code> 环境变量，这里直接添加下面的内容到 <code>spark-env.sh</code> 最后即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export SPARK_DIST_CLASSPATH=$(hadoop classpath)</div></pre></td></tr></table></figure>
+<h3 id="运行样例程序"><a href="#运行样例程序" class="headerlink" title="运行样例程序"></a>运行样例程序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> ../</div><div class="line">./bin/run-example SparkPi 10</div></pre></td></tr></table></figure>
+<p>这个程序会计算 PI 的近似值，执行之后可以在一团日志中找到</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Pi is roughly 3.1416671416671416</div></pre></td></tr></table></figure>
+<h3 id="使用-spark-shell"><a href="#使用-spark-shell" class="headerlink" title="使用 spark-shell"></a>使用 spark-shell</h3><p>spark-shell 提供了非常方便的基于 Scala 语言的命令行方式来是哟个 Spark，是学习 Spark 框架的很好方式。</p>
+<p>这里以计算 <code>README.md</code> 中的 WordCount 为例，首先进入命令行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">./bin/spark-shell</div><div class="line">Spark context Web UI available at http://hadoop-host:4040</div><div class="line">Spark context available as <span class="string">'sc'</span> (master = <span class="built_in">local</span>[*], app id = <span class="built_in">local</span>-1523582748504).</div><div class="line">Spark session available as <span class="string">'spark'</span>.</div><div class="line">Welcome to</div><div class="line">      ____              __</div><div class="line">     / __/__  ___ _____/ /__</div><div class="line">    _\ \/ _ \/ _ `/ __/  <span class="string">'_/</span></div><div class="line">   /___/ .__/\_,_/_/ /_/\_\   version 2.3.0</div><div class="line">      /_/</div><div class="line">         </div><div class="line">Using Scala version 2.11.8 (OpenJDK 64-Bit Server VM, Java 1.8.0_161)</div><div class="line">Type in expressions to have them evaluated.</div><div class="line">Type :help for more information.</div><div class="line"></div><div class="line">scala &gt;</div></pre></td></tr></table></figure>
+<p>可以看到，Spark 的 Web UI 可以从本机的 4040 端口访问。<br><code>Spark context</code> 与 <code>Spark session</code> 已经被初始化为 <code>sc</code> 与 <code>spark</code> 可以直接在命令行中使用。<br>当前 Spark 的版本是 2.3.0，Scala 版本是 2.11.8。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="keyword">val</span> a = sc.textFile(<span class="string">"file:///opt/spark/README.md"</span>)</div><div class="line">a: org.apache.spark.rdd.<span class="type">RDD</span>[<span class="type">String</span>] = file:<span class="comment">///opt/spark/README.md MapPartitionsRDD[1] at textFile at &lt;console&gt;:24</span></div><div class="line"></div><div class="line">scala&gt; a.count()</div><div class="line">res0: <span class="type">Long</span> = <span class="number">103</span></div><div class="line"></div><div class="line">scala&gt;</div></pre></td></tr></table></figure>
+<p>以上两条命令读取了 README.md 并计算了它的行数。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="keyword">val</span> w = a.flatMap(l =&gt; l.split(<span class="string">" "</span>)).filter(w =&gt; w.length() &lt; <span class="number">20</span> &amp;&amp; w.length() &gt; <span class="number">0</span>).map(w =&gt; (w, <span class="number">1</span>)).reduceByKey((x,y) =&gt; x + y).sortBy(i =&gt; i._2, <span class="literal">false</span>)</div><div class="line">w: org.apache.spark.rdd.<span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">Int</span>)] = <span class="type">MapPartitionsRDD</span>[<span class="number">10</span>] at sortBy at &lt;console&gt;:<span class="number">25</span></div><div class="line"></div><div class="line">scala&gt; w.take(<span class="number">10</span>)</div><div class="line">res0: <span class="type">Array</span>[(<span class="type">String</span>, <span class="type">Int</span>)] = <span class="type">Array</span>((the,<span class="number">24</span>), (to,<span class="number">17</span>), (<span class="type">Spark</span>,<span class="number">16</span>), (<span class="keyword">for</span>,<span class="number">12</span>), (##,<span class="number">9</span>), (and,<span class="number">9</span>), (a,<span class="number">8</span>), (can,<span class="number">7</span>), (run,<span class="number">7</span>), (on,<span class="number">7</span>))</div><div class="line"></div><div class="line">scala&gt;</div></pre></td></tr></table></figure>
+<p>这里执行了一系列的函数。首先将行通过 <code>flatMap</code> 转换为单词，然后通过 <code>filter</code> 过滤掉了大于 <code>20</code> 的单词和空的单词，再将单词通过 <code>map</code> 转换为 key-value, 然后以相同的 key 进行 <code>reduceByKey</code>，将 value 相加，最后以相加后的值倒序排序。</p>
+<p>最后，通过 <code>take</code> 取前十个，也就是出现最多的前十个单词，可以通过结果看到，单词 the 出现了 24 次。</p>
+<p>至此，完成了对于 README.md 的单词数目统计，可以看到，依托于 spark 提供的丰富的函数，可以很方便的对数据进行转换。</p>
+<p>在输出中可以看到，变量 <code>a</code> 的类型是 <code>org.apache.spark.rdd.RDD[String]</code>，变量 <code>w</code> 的类型是 <code>org.apache.spark.rdd.RDD[(String, Int)]</code>。</p>
+<p>RDD 也就是 Resilient Distributed Datasets， 在 Spark 2.0 之前，RDD 是主要的 Spark 编程接口，也就是说对于数据的转换操作是围绕着 RDD 来的。<br>在 Spark 2.0 之后，使用 Dataset 替换了 RDD， Dataset 拥有与 RDD 类似的强类型属性，但在对比 RDD 更加优化。 RDD 依然是支持的，但 Spark 非常推荐开发者转换到 Dataset，因为它有着更好的性能。</p>
+<p>使用 Dataset 来编写上面的单词统计程序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">scala&gt; val a = spark.read.textFile(&quot;file:///opt/spark/README.md&quot;)</div><div class="line">a: org.apache.spark.sql.Dataset[String] = [value: string]</div><div class="line"></div><div class="line">scala&gt; val w = a.flatMap(l =&gt; l.split(&quot; &quot;)).filter(w =&gt; w.length() &lt; 20 &amp;&amp; w.length() &gt; 0).groupByKey(identity).count().sort($&quot;count(1)&quot;.desc)</div><div class="line">w: org.apache.spark.sql.Dataset[(String, Long)] = [value: string, count(1): bigint]</div><div class="line"></div><div class="line">scala&gt; w.take(10)</div><div class="line">res10: Array[(String, Long)] = Array((the,24), (to,17), (Spark,16), (for,12), (and,9), (##,9), (a,8), (can,7), (on,7), (run,7))</div><div class="line"></div><div class="line">scala&gt;</div></pre></td></tr></table></figure>
+<p>在运算过程中，可以使用 cache 来缓存结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scale&gt; w.cache()</div></pre></td></tr></table></figure>
+<h2 id="使用-spark-sql-统计-Nginx-日志"><a href="#使用-spark-sql-统计-Nginx-日志" class="headerlink" title="使用 spark-sql 统计 Nginx 日志"></a>使用 spark-sql 统计 Nginx 日志</h2><p>数据依旧是使用几行 Nginx 日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">46.161.55.108 - - [08/Apr/2018:14:56:56 +0800] https://60.205.189.113 - &quot;GET /_asterisk/ HTTP/1.1&quot; 404 162 &quot;-&quot; &quot;python-requests/2.18.4&quot; &quot;-&quot;</div><div class="line">1.199.93.43 - - [08/Apr/2018:15:11:00 +0800] http://q2.cdn.example.com - &quot;GET / HTTP/1.1&quot; 403 564 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36&quot; &quot;171.8.70.8&quot;</div><div class="line">5.45.207.60 - - [08/Apr/2018:16:01:01 +0800] https://h5.example.com - &quot;GET /robots.txt HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">5.45.207.60 - - [08/Apr/2018:16:01:03 +0800] https://h5.example.com - &quot;GET /node_modules/postcss-reduce-idents HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.142.120 - - [08/Apr/2018:16:01:09 +0800] https://h5.example.com - &quot;GET /node_modules/icss-replace-symbols/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.142.120 - - [08/Apr/2018:16:01:10 +0800] https://h5.example.com - &quot;GET /node_modules/babel-helper-replace-supers/lib HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">5.45.207.41 - - [08/Apr/2018:16:01:18 +0800] https://h5.example.com - &quot;GET /node_modules/babel-helper-optimise-call-expression HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.183.10 - - [08/Apr/2018:16:01:24 +0800] https://h5.example.com - &quot;GET /node_modules/babel-plugin-transform-es2015-modules-commonjs/lib/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">37.9.113.74 - - [08/Apr/2018:16:01:57 +0800] https://h5.example.com - &quot;GET /node_modules/_jsesc@0.5.0@jsesc/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.142.21 - - [08/Apr/2018:16:02:00 +0800] https://h5.example.com - &quot;GET /node_modules/webpack-sources/node_modules/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div></pre></td></tr></table></figure>
+<p>这里目标是统计各个 IP 的访问次数，简单的使用空格分隔 IP 与其他数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">scala&gt; case class Log(ip:String, other:String)</div><div class="line">defined class Log</div><div class="line"></div><div class="line">scala&gt; val df = sc.textFile(&quot;/user/hive/warehouse/tbl_access_log/access_last_10.log&quot;).map(_.split(&quot; &quot;)).map(a =&gt; new Log(a(0), a(1))).toDF()</div><div class="line">df: org.apache.spark.sql.DataFrame = [ip: string, other: string]</div><div class="line"></div><div class="line">scala&gt; df.printSchema()</div><div class="line">root</div><div class="line"> |-- ip: string (nullable = true)</div><div class="line"> |-- other: string (nullable = true)</div><div class="line"></div><div class="line">scala&gt; df.createOrReplaceTempView(&quot;log&quot;)</div><div class="line"></div><div class="line">scala&gt; spark.sql(&quot;SELECT ip, count(*) AS c FROM log GROUP BY ip ORDER BY c DESC&quot;).show()</div><div class="line">+-------------+---+                                                             </div><div class="line">|           ip|  c|</div><div class="line">+-------------+---+</div><div class="line">|141.8.142.120|  2|</div><div class="line">|  5.45.207.60|  2|</div><div class="line">|  37.9.113.74|  1|</div><div class="line">|  1.199.93.43|  1|</div><div class="line">|46.161.55.108|  1|</div><div class="line">| 141.8.142.21|  1|</div><div class="line">| 141.8.183.10|  1|</div><div class="line">|  5.45.207.41|  1|</div><div class="line">+-------------+---+</div><div class="line"></div><div class="line"></div><div class="line">scala&gt;</div></pre></td></tr></table></figure>
+<p>这里首先定义了一个类 <code>Log</code> 用来表达一条日志，然后将 RDD 通过 <code>toDF</code> 转换为 DataFrame，然后 <code>df.createOrReplaceTempView</code> 创建了一个 <code>View</code> 类似于关系型数据库中的视图概念。<br>最后通过执行一条 SQL 语句，很方便的查询出访问最多的几个 IP 地址。</p>
+<p>DataFrame 是组织到命名列中的 Dataset， 概念上等同于关系型数据库中的表。<br>DateFrame 可以从各种来源构建，比如结构化的数据文件、Hive Table、外部数据库，现有的 RDD，在 Scale API 中 DataFrame 只是 Dataset[Row] 的别名，在 Java API 中，开发者需要使用 Dataset<row> 来表示 DataFrame。</row></p>
+<p>Dataset 编程接口从 Spark 1.6 添加进来。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://spark.apache.org/docs/latest/quick-start.html" target="_blank" rel="external">Spark Quick Start</a></li>
+<li><a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html" target="_blank" rel="external">Spark RDD Programming Guide</a></li>
+<li><a href="https://spark.apache.org/docs/latest/sql-programming-guide.html" target="_blank" rel="external">Spark SQL, DataFrames and Datasets Guide</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/15/Hive-Install-And-Using/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/15/Learn-Scala/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载安装"><span class="nav-number">2.</span> <span class="nav-text">下载安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">2.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行样例程序"><span class="nav-number">2.2.</span> <span class="nav-text">运行样例程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-spark-shell"><span class="nav-number">2.3.</span> <span class="nav-text">使用 spark-shell</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-spark-sql-统计-Nginx-日志"><span class="nav-number">3.</span> <span class="nav-text">使用 spark-sql 统计 Nginx 日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2018/04/15/Using-Spark/';
+      var disqus_title = "";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/04/15/Using-Spark/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

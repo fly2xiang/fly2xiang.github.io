@@ -1,0 +1,725 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="fly2xiang's site" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="title: “HBase 安装使用”date: 2018-04-15 22:46:17tags:
+
+Hadoop
+大数据
+HBase
+HDFScategories: 
+大数据
+
+概述HBase 是 Hadoop 家族中分布式、可伸缩的大数据存储。使用 HBase 可以达到随机、实时读写大数据。HBase 支持数十亿的行与数百万的列。HBase 是根据 Google BigTable 论文实现的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fly2xiang's site">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/15/Using-HBase/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="title: “HBase 安装使用”date: 2018-04-15 22:46:17tags:
+
+Hadoop
+大数据
+HBase
+HDFScategories: 
+大数据
+
+概述HBase 是 Hadoop 家族中分布式、可伸缩的大数据存储。使用 HBase 可以达到随机、实时读写大数据。HBase 支持数十亿的行与数百万的列。HBase 是根据 Google BigTable 论文实现的。">
+<meta property="og:updated_time" content="2018-04-15T14:46:30.527Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fly2xiang's site">
+<meta name="twitter:description" content="title: “HBase 安装使用”date: 2018-04-15 22:46:17tags:
+
+Hadoop
+大数据
+HBase
+HDFScategories: 
+大数据
+
+概述HBase 是 Hadoop 家族中分布式、可伸缩的大数据存储。使用 HBase 可以达到随机、实时读写大数据。HBase 支持数十亿的行与数百万的列。HBase 是根据 Google BigTable 论文实现的。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/15/Using-HBase/"/>
+
+
+  <title>  | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-04-15T22:46:30+08:00" content="2018-04-15">
+              2018-04-15
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/04/15/Using-HBase/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/15/Using-HBase/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>title: “HBase 安装使用”<br>date: 2018-04-15 22:46:17<br>tags:</p>
+<ul>
+<li>Hadoop</li>
+<li>大数据</li>
+<li>HBase</li>
+<li>HDFS<br>categories: </li>
+<li>大数据</li>
+</ul>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>HBase 是 Hadoop 家族中分布式、可伸缩的大数据存储。使用 HBase 可以达到随机、实时读写大数据。HBase 支持数十亿的行与数百万的列。HBase 是根据 Google BigTable 论文实现的。</p>
+<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>从 <a href="https://hbase.apache.org/" target="_blank" rel="external">HBase 官网</a> 下载并解压。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">tar zxvf hbase-1.2.6-bin.tar.gz</div><div class="line">ln <span class="_">-s</span> hbase-1.2.6 hbase</div><div class="line">mkdir -p /opt/hbase/zookeeper/property/dataDir</div><div class="line"><span class="built_in">cd</span> hbase</div></pre></td></tr></table></figure>
+<p>编辑 <code>bin/hbase-site.xml</code> 配置文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://127.0.0.1:9000/hbase<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.property.dataDir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>/opt/hbase/zookeeper/property/dataDir<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.unsafe.stream.capability.enforce<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span></div><div class="line">      Controls whether HBase will check for stream capabilities (hflush/hsync).</div><div class="line"></div><div class="line">      Disable this if you intend to run on LocalFileSystem, denoted by a rootdir</div><div class="line">      with the 'file://' scheme, but be mindful of the NOTE below.</div><div class="line"></div><div class="line">      WARNING: Setting this to false blinds you to potential data loss and</div><div class="line">      inconsistent system state in the event of process and/or node failures. If</div><div class="line">      HBase is complaining of an inability to use hsync or hflush it's most</div><div class="line">      likely not a false positive.</div><div class="line">    <span class="tag">&lt;/<span class="name">description</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>启动 HBase 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/start-hbase.sh</div></pre></td></tr></table></figure>
+<p>启动后可通过 Web 访问 16010 端口访问管理界面。</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>在使用 HBase 之前，需要理解一些基本概念</p>
+<ul>
+<li>表(table)：列式存储，支持高表&amp;宽表(上亿行，上百万列)</li>
+<li>行(row)：每一行由唯一的行键确定</li>
+<li>列族(columnFamily)：每一行包含一个或多个列族，是列的集合</li>
+<li>列(column)：列式存储，列是最基本单位，可能有多个版本的值</li>
+<li>时间戳(Timestamp)：列的不同版本之间用时间戳区分</li>
+<li>单元格(cell)：列的每一个版本是一个单元格，是存储的基本单位</li>
+</ul>
+<p>这里可以使用传统关系数据库的概念理解这些概念，但底层的数据存储结构与关系型数据库是不同的。</p>
+<ul>
+<li>行键可以理解为主键，唯一确定一行。</li>
+<li>列族的概念可以理解为纵向切分，访问频率不同或关系较近的列可以放在同一个列族。<br>例如文章，在传统数据库设计中为了性能考虑通常将文章内容这一较大的列拆分出去，与文章的其他数据（标题、作者等）放在不同的表中，这里 HBase 使用列族来区分。</li>
+<li>同一张表的列族最好控制位 2 ~ 3 个。</li>
+<li>值可以有多个版本，以时间戳区分。</li>
+</ul>
+<p>HBase 实质上是一张多维的 Map，可以理解为以 rowKey + columnFamily + qualifier + timestamp 为 Key， 以 value 为 Value 的 K-V 存储。<br>带来的优势是列可以随时指定，不存在的列不会存储，但针对每个带来的优势是列可以随时指定，不存在的列不会存储。<br>但针对每个 cell 都存储了 Key，因此 columnFamily 名称不要太长。</p>
+<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><p>启动 HBase Shell，定义 user 表，进行增删改查</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">./bin/hbase shell</div><div class="line">hbase&gt; create <span class="string">'user'</span>, <span class="string">'account'</span>	// 创建表，指定表名称与列族名称</div><div class="line">hbase&gt; put <span class="string">'user'</span>, <span class="string">'row_1'</span>, <span class="string">'account:username'</span> <span class="string">'jack'</span>	//添加一条数据，指定表名称，rowKey，列族与列名称，值</div><div class="line">hbase&gt; put <span class="string">'user'</span>, <span class="string">'row_2'</span>, <span class="string">'account:username'</span>, <span class="string">'alex'</span></div><div class="line">hbase&gt; put <span class="string">'user'</span>, <span class="string">'row_3'</span>, <span class="string">'account:username'</span>, <span class="string">'peter'</span></div><div class="line">hbase&gt; get <span class="string">'user'</span>, <span class="string">'row_2'</span>	//以表名称，rowKey 查询所有列</div><div class="line">hbase&gt; put <span class="string">'user'</span>, <span class="string">'row_3'</span>, <span class="string">'account:password'</span> <span class="string">'123456'</span>	//添加一个不同的列</div><div class="line">hbase&gt; get <span class="string">'user'</span>, <span class="string">'row_3'</span>, <span class="string">'account'</span>	//指定表名称，rowKey，columnFamily 查询，会查询出列族中的所有的列</div><div class="line">hbase&gt; get <span class="string">'user'</span>, <span class="string">'row_3'</span>, <span class="string">'account:username'</span>	//指定表名称，rowKey，columnFamily，列名查询值</div></pre></td></tr></table></figure>
+<h2 id="基础架构"><a href="#基础架构" class="headerlink" title="基础架构"></a>基础架构</h2><p>HBase 中的数据是分片存储的，每个分区中的 rowKey 是连续的。分区可能被存储在相同的机器上，也有可能是不同的机器。</p>
+<p>HBase 在写入数据时会先写入 HLog，HLog 起到数据恢复的作用，同一个 Server 上的不同分区公用一个 HLog 实例。在写入数据时会先写入到内存中，待缓存写满后再刷入磁盘。</p>
+<p>HBase 在文件的存储上完全依赖与 HDFS，称之为 HFile，在文件存储上，同一列族的数据会被写入到同一文件中，因此，在定义列族时最好将会被一同访问的数据放在同一列族中。</p>
+<p>对于读缓存，HBase 是在同一服务器上的所有分区使用一个读缓存，当读取某一条数据时，HBase 会将整个 HFile block 读取到 cache 中。另外需要注意的是<em>在做全表扫描时应当关闭度缓存，防止将其他热数据从缓存中刷出</em>。</p>
+<h2 id="数据查找的步骤"><a href="#数据查找的步骤" class="headerlink" title="数据查找的步骤"></a>数据查找的步骤</h2><p>对于查询一个 rowKey 的数据</p>
+<ol>
+<li>在 <code>hbase.meta</code> 表中查找数据对应的分区 (region id)，客户端会缓存 <code>hbase.meta</code> 表，以加快查询速度。</li>
+<li>在对应分区所在服务器上查找相应记录，有三种方式： 扫描缓存、块索引、布隆过滤器</li>
+</ol>
+<ul>
+<li>扫描缓存，扫描缓存是在内存中进行，速度比较快</li>
+<li>块索引，块索引在 HFile 结尾，包含了这个文件存储的起始 key，查找块索引可以很快找到此文件是否存在要找的数据</li>
+<li>布隆过滤器，</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/15/Learn-Scala/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载安装"><span class="nav-number">2.</span> <span class="nav-text">下载安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">3.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本操作"><span class="nav-number">4.</span> <span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础架构"><span class="nav-number">5.</span> <span class="nav-text">基础架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据查找的步骤"><span class="nav-number">6.</span> <span class="nav-text">数据查找的步骤</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2018/04/15/Using-HBase/';
+      var disqus_title = "";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/04/15/Using-HBase/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

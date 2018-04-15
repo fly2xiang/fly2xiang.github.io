@@ -1,0 +1,743 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="fly2xiang's site" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="title: “Scala 语法入门”date: 2018-04-15 19:20:17tags:
+
+Hadoop
+大数据
+Spark
+Scalacategories: 
+大数据
+
+概述在使用 Spark 时，很多的例子是使用 Scala 语言进行编写，因此有必要对 Scala 的语法与使用进行学习。
+Scala 是面向对象、函数式、静态类型编程语言。
+Scala 提供了命令行，可以以命令行方式执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fly2xiang's site">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/15/Learn-Scala/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="title: “Scala 语法入门”date: 2018-04-15 19:20:17tags:
+
+Hadoop
+大数据
+Spark
+Scalacategories: 
+大数据
+
+概述在使用 Spark 时，很多的例子是使用 Scala 语言进行编写，因此有必要对 Scala 的语法与使用进行学习。
+Scala 是面向对象、函数式、静态类型编程语言。
+Scala 提供了命令行，可以以命令行方式执">
+<meta property="og:updated_time" content="2018-04-15T14:45:22.179Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fly2xiang's site">
+<meta name="twitter:description" content="title: “Scala 语法入门”date: 2018-04-15 19:20:17tags:
+
+Hadoop
+大数据
+Spark
+Scalacategories: 
+大数据
+
+概述在使用 Spark 时，很多的例子是使用 Scala 语言进行编写，因此有必要对 Scala 的语法与使用进行学习。
+Scala 是面向对象、函数式、静态类型编程语言。
+Scala 提供了命令行，可以以命令行方式执">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/15/Learn-Scala/"/>
+
+
+  <title>  | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-04-15T22:45:22+08:00" content="2018-04-15">
+              2018-04-15
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/04/15/Learn-Scala/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/15/Learn-Scala/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>title: “Scala 语法入门”<br>date: 2018-04-15 19:20:17<br>tags:</p>
+<ul>
+<li>Hadoop</li>
+<li>大数据</li>
+<li>Spark</li>
+<li>Scala<br>categories: </li>
+<li>大数据</li>
+</ul>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在使用 Spark 时，很多的例子是使用 Scala 语言进行编写，因此有必要对 Scala 的语法与使用进行学习。</p>
+<p>Scala 是面向对象、函数式、静态类型编程语言。</p>
+<p>Scala 提供了命令行，可以以命令行方式执行。</p>
+<p>Scala 可以运行于 JVM 环境，能够与 Java 语言很方便地交互，同样能够访问很多的 Java 库。</p>
+<h2 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h2><h3 id="表达式"><a href="#表达式" class="headerlink" title="表达式"></a>表达式</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span> + <span class="number">1</span></div><div class="line">println(<span class="number">1</span>)</div><div class="line">println(<span class="string">"Hello,"</span> + <span class="string">"World"</span>)</div></pre></td></tr></table></figure>
+<h3 id="值"><a href="#值" class="headerlink" title="值"></a>值</h3><p>使用 <code>val</code> 定义 （类似于常量）</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> a = <span class="number">1</span> + <span class="number">1</span>	<span class="comment">//类型推断</span></div><div class="line">a = <span class="number">2</span>	<span class="comment">//编译错误，不能重新赋值给 "值"</span></div><div class="line"><span class="keyword">val</span> b: <span class="type">Int</span> = <span class="number">1</span> + <span class="number">1</span>   <span class="comment">//指定类型</span></div></pre></td></tr></table></figure>
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>使用 <code>var</code> 定义</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">1</span> + <span class="number">1</span></div><div class="line">a = <span class="number">3</span>	<span class="comment">//变量可以重新赋值</span></div><div class="line"><span class="keyword">var</span> b: <span class="type">String</span> = <span class="string">"foo"</span></div></pre></td></tr></table></figure>
+<h3 id="块"><a href="#块" class="headerlink" title="块"></a>块</h3><p>以 <code>{ }</code> 包裹，注意块的值</p>
+<p>···scala<br>println({<br>    val a = 1 + 1<br>    a + 1<br>})    // 输出 3<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">### 函数</div><div class="line"></div><div class="line">支持 Lambda 方式的函数定义</div><div class="line"></div><div class="line">```scala</div><div class="line">(a: Int) =&gt; a + 1</div><div class="line"></div><div class="line">val addOne = (a: Int) =&gt; a + 1</div><div class="line">println(addOne(1))	// 输出 2</div><div class="line"></div><div class="line">val foo = () =&gt; 8</div><div class="line">println(foo())	// 输出 8</div></pre></td></tr></table></figure></p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>方法与函数非常类似，但有几点关键的不同</p>
+<ul>
+<li>方法使用 <code>def</code> 定义，<code>def</code> 之后跟上方法的名称，然后是参数列表，然后是返回值类型，最后是方法的内容</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">addOne</span></span>(a: <span class="type">Int</span>): <span class="type">Int</span> = a + <span class="number">1</span></div><div class="line">println(addOne(<span class="number">1</span>))	<span class="comment">// 输出 2</span></div></pre></td></tr></table></figure>
+<ul>
+<li>方法可以拥有多个参数列表，或者无参数列表</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">addTwo</span></span>(a: <span class="type">Int</span>)(b: <span class="type">Int</span>): <span class="type">Int</span> = a + b</div><div class="line">println(addTwo(<span class="number">1</span>)(<span class="number">2</span>)) <span class="comment">// 输出 3</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span></span>: <span class="type">String</span> = <span class="string">"bar"</span></div><div class="line">println(foo) 	<span class="comment">// 输出 bar</span></div></pre></td></tr></table></figure>
+<p>方法和函数在内容较多时可以使用块，但 Scala 没有 <code>return</code> 语句，返回值即为块的值</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> foo = () =&gt; &#123;</div><div class="line">    <span class="keyword">val</span> a = <span class="number">1</span></div><div class="line">	<span class="keyword">val</span> b = <span class="number">2</span></div><div class="line">	a + b</div><div class="line">&#125;</div><div class="line">println(foo())</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span></span>: <span class="type">Int</span> = &#123;</div><div class="line">    <span class="keyword">val</span> a = <span class="number">1</span>;</div><div class="line">	<span class="keyword">val</span> b = <span class="number">2</span>;</div><div class="line">	a + b</div><div class="line">&#125;</div><div class="line">println(foo)</div></pre></td></tr></table></figure>
+<h3 id="类"><a href="#类" class="headerlink" title="类"></a>类</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>(<span class="params">a: <span class="type">Int</span>, b: <span class="type">Int</span></span>) </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span></span>(): <span class="type">Unit</span> = &#123;</div><div class="line">	    println(<span class="string">"a = "</span> + a + <span class="string">", b = "</span> + b)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">val</span> foo = <span class="keyword">new</span> <span class="type">Foo</span>(<span class="number">1</span>, <span class="number">2</span>)</div><div class="line">foo.show()</div></pre></td></tr></table></figure>
+<p>这里返回类型 <code>Unit</code> 与其他语言的 <code>void</code> 类似</p>
+<h3 id="case-class"><a href="#case-class" class="headerlink" title="case class"></a>case class</h3><p>case class 默认是不可变 (immutable) 的，并以值来比较</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Rect</span>(<span class="params">w: <span class="type">Int</span>, h: <span class="type">Int</span></span>)</span></div><div class="line"><span class="keyword">val</span> rect = <span class="type">Rect</span>(<span class="number">3</span>, <span class="number">4</span>)</div><div class="line"><span class="keyword">val</span> rect2 = <span class="type">Rect</span>(<span class="number">3</span>, <span class="number">4</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> (rect == rect2) &#123;</div><div class="line">	println(<span class="string">"they are same"</span>)	<span class="comment">//输出</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>实例化 case class 不需要使用 <code>new</code> 关键字，直接通过 <code>==</code> 比较</p>
+<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><p>对象类似于单实例的类，可以理解为静态类</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">IdGenerator</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> count = <span class="number">0</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">create</span></span>(): <span class="type">Int</span> = &#123;</div><div class="line">	    count += <span class="number">1</span></div><div class="line">		count</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">val</span> id = <span class="type">IdGenerator</span>.create()</div><div class="line">println(id)	<span class="comment">// 输出 1</span></div><div class="line"><span class="keyword">val</span> id2 = <span class="type">IdGenerator</span>.create()</div><div class="line">println(id2) <span class="comment">// 输出 2</span></div></pre></td></tr></table></figure>
+<h3 id="Traits"><a href="#Traits" class="headerlink" title="Traits"></a>Traits</h3><p>Traits 可以包含字段与方法，多个 Traits 可以组合</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Foo</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">bar</span></span>(a: <span class="type">Int</span>): <span class="type">Int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Foo2</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">bar</span></span>(a: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</div><div class="line">	    a * a</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo3</span> <span class="keyword">extends</span> <span class="title">Foo2</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo4</span>(<span class="params">b: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Foo2</span> </span>&#123;</div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">bar</span></span>(a: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</div><div class="line">	    (a * a) + b</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">val</span> f = <span class="keyword">new</span> <span class="type">Foo4</span>(<span class="number">2</span>)</div><div class="line">println(f.bar(<span class="number">2</span>)) <span class="comment">// 输出 6</span></div></pre></td></tr></table></figure>
+<h3 id="主方法"><a href="#主方法" class="headerlink" title="主方法"></a>主方法</h3><p>程序的入口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">object Main &#123;</div><div class="line">    def main(args: Array[String]): Unit &#123;</div><div class="line">	    println(&quot;Welcome&quot;)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>所有类型都继承自 <code>Any</code>，<code>Any</code> 有 <code>equals</code>、<code>hashCode</code>、<code>toString</code> 方法。<br><code>Any</code> 有两个子类，分别是 <code>AnyVal</code> 和 <code>AnyRef</code> 。<br><code>AnyVal</code> 是值类型的祖先，不能是 <code>null</code>， 有九个预定义的类型： <code>Double</code>、<code>Float</code>、<code>Long</code>、<code>Int</code>、<code>Short</code>、<code>Byte</code>、<code>Char</code>、<code>Unit</code>、<code>Boolean</code>。<br><code>AnyRef</code> 是引用类型的祖先，如果 Scala 运行与 JVM 环境， <code>AnyRef</code> 与 <code>java.lang.Object</code> 是一样的。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> list: <span class="type">List</span>[<span class="type">Any</span>] = <span class="type">List</span>(</div><div class="line">  <span class="string">"a string"</span>,</div><div class="line">  <span class="number">732</span>,  <span class="comment">// an integer</span></div><div class="line">  'c',  <span class="comment">// a character</span></div><div class="line">  <span class="literal">true</span>, <span class="comment">// a boolean value</span></div><div class="line">  () =&gt; <span class="string">"an anonymous function returning a string"</span></div><div class="line">)</div><div class="line"></div><div class="line">list.foreach(element =&gt; println(element))</div></pre></td></tr></table></figure>
+<p><code>Nothing</code> 类型是所有类型的子类型，<code>Nothing</code> 没有值<br><code>Null</code> 类型是所有引用类型的子类</p>
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><p>值类型可以从低范围的类型转换到高范围的类型 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Byte --&gt; Short --&gt; Int --&gt; Long --&gt; Float --&gt; Double</div><div class="line">                    ↑</div><div class="line">                    |</div><div class="line">                   Char</div></pre></td></tr></table></figure>
+<h2 id="类-1"><a href="#类-1" class="headerlink" title="类"></a>类</h2><h3 id="定义类"><a href="#定义类" class="headerlink" title="定义类"></a>定义类</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></div><div class="line"><span class="keyword">val</span> foo = <span class="keyword">new</span> <span class="type">Foo</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rect</span>(<span class="params">var w: <span class="type">Int</span> = 1, var h: <span class="type">Int</span> = 1</span>) </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">zoom</span></span>(x: <span class="type">Int</span>, y: <span class="type">Int</span>): <span class="type">Unit</span> = &#123;</div><div class="line">        w = w + x</div><div class="line">        h = h + y</div><div class="line">    &#125;</div><div class="line">	</div><div class="line">	<span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">toString</span></span>(): <span class="type">String</span> = &#123;</div><div class="line">	    <span class="string">s"w = <span class="subst">$w</span>, h = <span class="subst">$h</span>"</span></div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">val</span> rect = <span class="keyword">new</span> <span class="type">Rect</span>(<span class="number">3</span>, <span class="number">4</span>)</div><div class="line">rect.zoom(<span class="number">1</span>, <span class="number">2</span>)</div><div class="line">println(rect)</div></pre></td></tr></table></figure>
+<h3 id="Getter-Setter-语法"><a href="#Getter-Setter-语法" class="headerlink" title="Getter/Setter 语法"></a>Getter/Setter 语法</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rect</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> _w = <span class="number">0</span></div><div class="line">	<span class="keyword">private</span> <span class="keyword">var</span> _h = <span class="number">0</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">w</span> </span>= _w</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">h</span> </span>= _h</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">w_=</span> </span>(value: <span class="type">Int</span>): <span class="type">Unit</span> = &#123;</div><div class="line">	    _x = value</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">h_=</span> </span>(value: <span class="type">Int</span>): <span class="type">Unit</span> = &#123;</div><div class="line">	    _h = value</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">val</span> rect = <span class="keyword">new</span> <span class="type">Rect</span></div><div class="line">rect.w = <span class="number">3</span></div><div class="line">rect.h = <span class="number">4</span></div></pre></td></tr></table></figure>
+<p>在构造器中的参数，如果使用 <code>val</code> 或 <code>var</code> 修饰则代表他们是 <code>public</code> 的，否则则代表是 <code>private</code> 的。使用 <code>val</code> 修饰时不可被修改。</p>
+<h2 id="类型组合与混合"><a href="#类型组合与混合" class="headerlink" title="类型组合与混合"></a>类型组合与混合</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</div><div class="line">  <span class="keyword">val</span> message: <span class="type">String</span></div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">  <span class="keyword">val</span> message = <span class="string">"I'm an instance of class B"</span></div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">loudMessage</span> </span>= message.toUpperCase()</div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> <span class="keyword">extends</span> <span class="title">B</span> <span class="keyword">with</span> <span class="title">C</span></span></div><div class="line"></div><div class="line"><span class="keyword">val</span> d = <span class="keyword">new</span> <span class="type">D</span></div><div class="line">println(d.message)  <span class="comment">// I'm an instance of class B</span></div><div class="line">println(d.loudMessage)  <span class="comment">// I'M AN INSTANCE OF CLASS B</span></div></pre></td></tr></table></figure>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbsIterator</span> </span>&#123;</div><div class="line">  <span class="class"><span class="keyword">type</span> <span class="title">T</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">hasNext</span></span>: <span class="type">Boolean</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">next</span></span>(): <span class="type">T</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">StringIterator</span>(<span class="params">s: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">AbsIterator</span> </span>&#123;</div><div class="line">  <span class="class"><span class="keyword">type</span> <span class="title">T</span> </span>= <span class="type">Char</span></div><div class="line">  <span class="keyword">private</span> <span class="keyword">var</span> i = <span class="number">0</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">hasNext</span> </span>= i &lt; s.length</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">next</span></span>() = &#123;</div><div class="line">    <span class="keyword">val</span> ch = s charAt i</div><div class="line">    i += <span class="number">1</span></div><div class="line">    ch</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">RichIterator</span> <span class="keyword">extends</span> <span class="title">AbsIterator</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">foreach</span></span>(f: <span class="type">T</span> =&gt; <span class="type">Unit</span>): <span class="type">Unit</span> = <span class="keyword">while</span> (hasNext) f(next())</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">StringIteratorTest</span> <span class="keyword">extends</span> <span class="title">App</span> </span>&#123;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">RichStringIter</span> <span class="keyword">extends</span> <span class="title">StringIterator</span>(<span class="params">"<span class="type">Scala</span>"</span>) <span class="keyword">with</span> <span class="title">RichIterator</span></span></div><div class="line">  <span class="keyword">val</span> richStringIter = <span class="keyword">new</span> <span class="type">RichStringIter</span></div><div class="line">  richStringIter foreach println</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="高阶函数"><a href="#高阶函数" class="headerlink" title="高阶函数"></a>高阶函数</h2><p>函数是函数式编程语言的一等公民，在 Scala 中，将使用函数作为参数或返回函数的方法和函数称为 “高阶函数”。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> seq = <span class="type">Seq</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</div><div class="line"><span class="keyword">val</span> seq2 = seq.map(x =&gt; x * <span class="number">2</span>)</div><div class="line"><span class="keyword">val</span> seq2 = seq.map(_ * <span class="number">2</span>)</div><div class="line">println(seq2) <span class="comment">// List(2, 4, 6)</span></div></pre></td></tr></table></figure>
+<p>Scala 支持嵌套的函数与方法定义。</p>
+<h2 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">val regex = &quot;[0-9]&quot;.r</div><div class="line">regex.findFirstMatchIn(&quot;foobar1&quot;) match &#123;</div><div class="line">    case Some(_) =&gt; println(&quot;Match a Number&quot;)</div><div class="line">	case None =&gt; println(&quot;No Number&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Scala 使用 <code>&quot;&quot;&quot;</code> 来使用多行字符串，注意第二行开始的 <code>|</code> ，最后使用 <code>stripMargin</code> 会将行首的 <code>|</code> 与其之前的空白去掉。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">var name =</div><div class="line">  """line0</div><div class="line">    |line1</div><div class="line">    |line2</div><div class="line">    |line3</div><div class="line">  """.stripMargin</div><div class="line">println(name)</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/15/Using-Spark/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/15/Using-HBase/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单例子"><span class="nav-number">2.</span> <span class="nav-text">简单例子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#表达式"><span class="nav-number">2.1.</span> <span class="nav-text">表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#值"><span class="nav-number">2.2.</span> <span class="nav-text">值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量"><span class="nav-number">2.3.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#块"><span class="nav-number">2.4.</span> <span class="nav-text">块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法"><span class="nav-number">2.5.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类"><span class="nav-number">2.6.</span> <span class="nav-text">类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#case-class"><span class="nav-number">2.7.</span> <span class="nav-text">case class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象"><span class="nav-number">2.8.</span> <span class="nav-text">对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Traits"><span class="nav-number">2.9.</span> <span class="nav-text">Traits</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主方法"><span class="nav-number">2.10.</span> <span class="nav-text">主方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类型"><span class="nav-number">3.</span> <span class="nav-text">类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类型转换"><span class="nav-number">3.1.</span> <span class="nav-text">类型转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类-1"><span class="nav-number">4.</span> <span class="nav-text">类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义类"><span class="nav-number">4.1.</span> <span class="nav-text">定义类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Getter-Setter-语法"><span class="nav-number">4.2.</span> <span class="nav-text">Getter/Setter 语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类型组合与混合"><span class="nav-number">5.</span> <span class="nav-text">类型组合与混合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高阶函数"><span class="nav-number">6.</span> <span class="nav-text">高阶函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则表达式"><span class="nav-number">7.</span> <span class="nav-text">正则表达式</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2018/04/15/Learn-Scala/';
+      var disqus_title = "";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/04/15/Learn-Scala/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
