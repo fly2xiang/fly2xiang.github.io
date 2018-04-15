@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="fly2xiang's site" />
+  <meta name="keywords" content="Hadoop,大数据,HDFS,分布式存储," />
 
 
 
@@ -84,43 +84,19 @@
 
 
 
-<meta name="description" content="title: “HDFS 命令行与编程访问”date: 2018-04-10 16:20:17tags:
-
-Hadoop
-HDFS
-大数据
-分布式存储categories: 
-大数据
-
-摘要借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。
-命令行访问HDFS 可以使用 ./bin/hdfs 访问，">
+<meta name="description" content="摘要借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。
+命令行访问HDFS 可以使用 ./bin/hdfs 访问，也可在 Hadoop 配置为使用 HDFS 作为存储时 (core-site.xml 中 fs.defaultFS) 使用 ./bin/hadoop fs 访问。这里以 ./bin/ha">
 <meta property="og:type" content="article">
-<meta property="og:title" content="fly2xiang's site">
-<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/15/HDFS-Shell-And-Programing/index.html">
+<meta property="og:title" content="HDFS 命令行与编程访问">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/10/HDFS-Shell-And-Programing/index.html">
 <meta property="og:site_name" content="fly2xiang's site">
-<meta property="og:description" content="title: “HDFS 命令行与编程访问”date: 2018-04-10 16:20:17tags:
-
-Hadoop
-HDFS
-大数据
-分布式存储categories: 
-大数据
-
-摘要借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。
-命令行访问HDFS 可以使用 ./bin/hdfs 访问，">
-<meta property="og:updated_time" content="2018-04-15T14:38:43.864Z">
+<meta property="og:description" content="摘要借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。
+命令行访问HDFS 可以使用 ./bin/hdfs 访问，也可在 Hadoop 配置为使用 HDFS 作为存储时 (core-site.xml 中 fs.defaultFS) 使用 ./bin/hadoop fs 访问。这里以 ./bin/ha">
+<meta property="og:updated_time" content="2018-04-15T14:57:36.863Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fly2xiang's site">
-<meta name="twitter:description" content="title: “HDFS 命令行与编程访问”date: 2018-04-10 16:20:17tags:
-
-Hadoop
-HDFS
-大数据
-分布式存储categories: 
-大数据
-
-摘要借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。
-命令行访问HDFS 可以使用 ./bin/hdfs 访问，">
+<meta name="twitter:title" content="HDFS 命令行与编程访问">
+<meta name="twitter:description" content="摘要借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。
+命令行访问HDFS 可以使用 ./bin/hdfs 访问，也可在 Hadoop 配置为使用 HDFS 作为存储时 (core-site.xml 中 fs.defaultFS) 使用 ./bin/hadoop fs 访问。这里以 ./bin/ha">
 
 
 
@@ -141,10 +117,10 @@ HDFS
 
 
 
-  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/15/HDFS-Shell-And-Programing/"/>
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/10/HDFS-Shell-And-Programing/"/>
 
 
-  <title>  | fly2xiang's site </title>
+  <title> HDFS 命令行与编程访问 | fly2xiang's site </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -284,7 +260,7 @@ HDFS
             
             
               
-                
+                HDFS 命令行与编程访问
               
             
           </h1>
@@ -296,19 +272,38 @@ HDFS
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-04-15T22:38:43+08:00" content="2018-04-15">
-              2018-04-15
+            <time itemprop="dateCreated" datetime="2018-04-10T16:20:17+08:00" content="2018-04-10">
+              2018-04-10
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/大数据/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/04/15/HDFS-Shell-And-Programing/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/15/HDFS-Shell-And-Programing/" itemprop="commentsCount"></span>
+                <a href="/2018/04/10/HDFS-Shell-And-Programing/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/10/HDFS-Shell-And-Programing/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -336,15 +331,7 @@ HDFS
       
 
       
-        <p>title: “HDFS 命令行与编程访问”<br>date: 2018-04-10 16:20:17<br>tags:</p>
-<ul>
-<li>Hadoop</li>
-<li>HDFS</li>
-<li>大数据</li>
-<li>分布式存储<br>categories: </li>
-<li>大数据</li>
-</ul>
-<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。</p>
+        <h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>借助于文件系统 Shell，可以像 Linux Shell 一样方便的访问 HDFS。另外的，通过连接 namenode 可以编程远程访问 HDFS。</p>
 <h2 id="命令行访问"><a href="#命令行访问" class="headerlink" title="命令行访问"></a>命令行访问</h2><p>HDFS 可以使用 <code>./bin/hdfs</code> 访问，也可在 Hadoop 配置为使用 HDFS 作为存储时 (core-site.xml 中 fs.defaultFS) 使用 <code>./bin/hadoop fs</code> 访问。<br>这里以 <code>./bin/hadoop fs</code> 为例。</p>
 <p>创建工作目录</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/hadoop fs -mkdir /user</div></pre></td></tr></table></figure>
@@ -392,21 +379,33 @@ HDFS
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Hadoop/" rel="tag">#Hadoop</a>
+          
+            <a href="/tags/大数据/" rel="tag">#大数据</a>
+          
+            <a href="/tags/HDFS/" rel="tag">#HDFS</a>
+          
+            <a href="/tags/分布式存储/" rel="tag">#分布式存储</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/15/Hadoop-Pseudo-Distributed-Operation/" rel="next" title="">
-                <i class="fa fa-chevron-left"></i> 
+              <a href="/2018/04/09/Hadoop-Pseudo-Distributed-Operation/" rel="next" title="Hadoop 3.1.0 伪分布式搭建">
+                <i class="fa fa-chevron-left"></i> Hadoop 3.1.0 伪分布式搭建
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/04/15/First-MapReduce-Program/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/04/11/First-MapReduce-Program/" rel="prev" title="第一个 MapReduce 程序">
+                第一个 MapReduce 程序 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -490,7 +489,7 @@ HDFS
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -499,7 +498,7 @@ HDFS
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-count">57</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -684,9 +683,9 @@ HDFS
 
     <script type="text/javascript">
       var disqus_shortname = 'fly2xiangs-site';
-      var disqus_identifier = '2018/04/15/HDFS-Shell-And-Programing/';
-      var disqus_title = "";
-      var disqus_url = 'http://www.liuzhixiang.com/2018/04/15/HDFS-Shell-And-Programing/';
+      var disqus_identifier = '2018/04/10/HDFS-Shell-And-Programing/';
+      var disqus_title = "HDFS 命令行与编程访问";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/04/10/HDFS-Shell-And-Programing/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');

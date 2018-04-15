@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="fly2xiang's site" />
+  <meta name="keywords" content="Hadoop,大数据,Spark," />
 
 
 
@@ -84,46 +84,28 @@
 
 
 
-<meta name="description" content="title: “Spark 2.3.0 安装使用入门”date: 2018-04-14 21:20:17tags:
-
-Hadoop
-大数据
-Sparkcategories: 
-大数据
-
-概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
+<meta name="description" content="概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
 
 调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；
-计算慢，">
+计算慢，每一步都要保存中间结果到磁盘，相比 Spark 使用内存缓存中间结果较为耗时；
+使用复杂，只提供 Map/Reduce 两种形式，相比 Spark 提供 flatMap、join、gro">
 <meta property="og:type" content="article">
-<meta property="og:title" content="fly2xiang's site">
-<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/15/Using-Spark/index.html">
+<meta property="og:title" content="Spark 2.3.0 安装使用入门">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/14/Using-Spark/index.html">
 <meta property="og:site_name" content="fly2xiang's site">
-<meta property="og:description" content="title: “Spark 2.3.0 安装使用入门”date: 2018-04-14 21:20:17tags:
-
-Hadoop
-大数据
-Sparkcategories: 
-大数据
-
-概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
+<meta property="og:description" content="概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
 
 调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；
-计算慢，">
-<meta property="og:updated_time" content="2018-04-15T14:44:17.761Z">
+计算慢，每一步都要保存中间结果到磁盘，相比 Spark 使用内存缓存中间结果较为耗时；
+使用复杂，只提供 Map/Reduce 两种形式，相比 Spark 提供 flatMap、join、gro">
+<meta property="og:updated_time" content="2018-04-15T14:58:29.708Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fly2xiang's site">
-<meta name="twitter:description" content="title: “Spark 2.3.0 安装使用入门”date: 2018-04-14 21:20:17tags:
-
-Hadoop
-大数据
-Sparkcategories: 
-大数据
-
-概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
+<meta name="twitter:title" content="Spark 2.3.0 安装使用入门">
+<meta name="twitter:description" content="概述Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题
 
 调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；
-计算慢，">
+计算慢，每一步都要保存中间结果到磁盘，相比 Spark 使用内存缓存中间结果较为耗时；
+使用复杂，只提供 Map/Reduce 两种形式，相比 Spark 提供 flatMap、join、gro">
 
 
 
@@ -144,10 +126,10 @@ Sparkcategories:
 
 
 
-  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/15/Using-Spark/"/>
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/14/Using-Spark/"/>
 
 
-  <title>  | fly2xiang's site </title>
+  <title> Spark 2.3.0 安装使用入门 | fly2xiang's site </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -287,7 +269,7 @@ Sparkcategories:
             
             
               
-                
+                Spark 2.3.0 安装使用入门
               
             
           </h1>
@@ -299,19 +281,38 @@ Sparkcategories:
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-04-15T22:44:17+08:00" content="2018-04-15">
-              2018-04-15
+            <time itemprop="dateCreated" datetime="2018-04-14T21:20:17+08:00" content="2018-04-14">
+              2018-04-14
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/大数据/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/04/15/Using-Spark/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/15/Using-Spark/" itemprop="commentsCount"></span>
+                <a href="/2018/04/14/Using-Spark/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/14/Using-Spark/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -339,14 +340,7 @@ Sparkcategories:
       
 
       
-        <p>title: “Spark 2.3.0 安装使用入门”<br>date: 2018-04-14 21:20:17<br>tags:</p>
-<ul>
-<li>Hadoop</li>
-<li>大数据</li>
-<li>Spark<br>categories: </li>
-<li>大数据</li>
-</ul>
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Spark 可以认为是改进版的 MapReduce，改进了 MapReduce 存在的以下问题</p>
 <ul>
 <li>调度慢，启动耗时，由于 MapReduce 使用进程级的调度，相比 Spark 线程级调度，启动较慢；</li>
 <li>计算慢，每一步都要保存中间结果到磁盘，相比 Spark 使用内存缓存中间结果较为耗时；</li>
@@ -411,21 +405,31 @@ Sparkcategories:
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Hadoop/" rel="tag">#Hadoop</a>
+          
+            <a href="/tags/大数据/" rel="tag">#大数据</a>
+          
+            <a href="/tags/Spark/" rel="tag">#Spark</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/15/Hive-Install-And-Using/" rel="next" title="">
-                <i class="fa fa-chevron-left"></i> 
+              <a href="/2018/04/13/Hive-Install-And-Using/" rel="next" title="Hive 安装使用">
+                <i class="fa fa-chevron-left"></i> Hive 安装使用
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/04/15/Learn-Scala/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/04/15/Learn-Scala/" rel="prev" title="Scala 语法入门">
+                Scala 语法入门 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -509,7 +513,7 @@ Sparkcategories:
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -518,7 +522,7 @@ Sparkcategories:
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-count">57</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -703,9 +707,9 @@ Sparkcategories:
 
     <script type="text/javascript">
       var disqus_shortname = 'fly2xiangs-site';
-      var disqus_identifier = '2018/04/15/Using-Spark/';
-      var disqus_title = "";
-      var disqus_url = 'http://www.liuzhixiang.com/2018/04/15/Using-Spark/';
+      var disqus_identifier = '2018/04/14/Using-Spark/';
+      var disqus_title = "Spark 2.3.0 安装使用入门";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/04/14/Using-Spark/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');

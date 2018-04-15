@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="fly2xiang's site" />
+  <meta name="keywords" content="Hadoop,大数据,MapReduce," />
 
 
 
@@ -84,43 +84,22 @@
 
 
 
-<meta name="description" content="title: “第一个 MapReduce 程序”date: 2018-04-11 13:20:17tags:
-
-Hadoop
-大数据
-MapReducecategories: 
-大数据
-
-概述Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。
+<meta name="description" content="概述Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。
 MapReduce 是以 Key-Value 方式处理数据的，标准流程:
-1(input) &amp;lt;k1, v1">
+1(input) &amp;lt;k1, v1&amp;gt; -&amp;gt; map -&amp;gt; &amp;lt;k2, v2&amp;gt; -&amp;gt; combine -&amp;gt; &amp;lt;k2, v2&amp;gt; -&amp;gt; reduce -&amp;gt; &amp;lt;k">
 <meta property="og:type" content="article">
-<meta property="og:title" content="fly2xiang's site">
-<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/15/First-MapReduce-Program/index.html">
+<meta property="og:title" content="第一个 MapReduce 程序">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/11/First-MapReduce-Program/index.html">
 <meta property="og:site_name" content="fly2xiang's site">
-<meta property="og:description" content="title: “第一个 MapReduce 程序”date: 2018-04-11 13:20:17tags:
-
-Hadoop
-大数据
-MapReducecategories: 
-大数据
-
-概述Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。
+<meta property="og:description" content="概述Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。
 MapReduce 是以 Key-Value 方式处理数据的，标准流程:
-1(input) &amp;lt;k1, v1">
-<meta property="og:updated_time" content="2018-04-15T14:41:01.047Z">
+1(input) &amp;lt;k1, v1&amp;gt; -&amp;gt; map -&amp;gt; &amp;lt;k2, v2&amp;gt; -&amp;gt; combine -&amp;gt; &amp;lt;k2, v2&amp;gt; -&amp;gt; reduce -&amp;gt; &amp;lt;k">
+<meta property="og:updated_time" content="2018-04-15T14:57:36.860Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fly2xiang's site">
-<meta name="twitter:description" content="title: “第一个 MapReduce 程序”date: 2018-04-11 13:20:17tags:
-
-Hadoop
-大数据
-MapReducecategories: 
-大数据
-
-概述Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。
+<meta name="twitter:title" content="第一个 MapReduce 程序">
+<meta name="twitter:description" content="概述Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。
 MapReduce 是以 Key-Value 方式处理数据的，标准流程:
-1(input) &amp;lt;k1, v1">
+1(input) &amp;lt;k1, v1&amp;gt; -&amp;gt; map -&amp;gt; &amp;lt;k2, v2&amp;gt; -&amp;gt; combine -&amp;gt; &amp;lt;k2, v2&amp;gt; -&amp;gt; reduce -&amp;gt; &amp;lt;k">
 
 
 
@@ -141,10 +120,10 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
 
 
 
-  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/15/First-MapReduce-Program/"/>
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/11/First-MapReduce-Program/"/>
 
 
-  <title>  | fly2xiang's site </title>
+  <title> 第一个 MapReduce 程序 | fly2xiang's site </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -284,7 +263,7 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
             
             
               
-                
+                第一个 MapReduce 程序
               
             
           </h1>
@@ -296,19 +275,38 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-04-15T22:41:01+08:00" content="2018-04-15">
-              2018-04-15
+            <time itemprop="dateCreated" datetime="2018-04-11T13:20:17+08:00" content="2018-04-11">
+              2018-04-11
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/大数据/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/04/15/First-MapReduce-Program/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/15/First-MapReduce-Program/" itemprop="commentsCount"></span>
+                <a href="/2018/04/11/First-MapReduce-Program/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/11/First-MapReduce-Program/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -336,14 +334,7 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
       
 
       
-        <p>title: “第一个 MapReduce 程序”<br>date: 2018-04-11 13:20:17<br>tags:</p>
-<ul>
-<li>Hadoop</li>
-<li>大数据</li>
-<li>MapReduce<br>categories: </li>
-<li>大数据</li>
-</ul>
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Hadoop MapReduce 可以方便的编写运行与数千台计算节点集群的大数据量处理程序。</p>
 <p>MapReduce 是以 Key-Value 方式处理数据的，标准流程:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(input) &lt;k1, v1&gt; -&gt; map -&gt; &lt;k2, v2&gt; -&gt; combine -&gt; &lt;k2, v2&gt; -&gt; reduce -&gt; &lt;k3, v3&gt; (output)</div></pre></td></tr></table></figure>
 <h2 id="第一个-MapReduce-程序"><a href="#第一个-MapReduce-程序" class="headerlink" title="第一个 MapReduce 程序"></a>第一个 MapReduce 程序</h2><p>第一个 MapReduce 程序是一个简单的单词统计，即 WordCount：</p>
@@ -388,21 +379,31 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Hadoop/" rel="tag">#Hadoop</a>
+          
+            <a href="/tags/大数据/" rel="tag">#大数据</a>
+          
+            <a href="/tags/MapReduce/" rel="tag">#MapReduce</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/15/HDFS-Shell-And-Programing/" rel="next" title="">
-                <i class="fa fa-chevron-left"></i> 
+              <a href="/2018/04/10/HDFS-Shell-And-Programing/" rel="next" title="HDFS 命令行与编程访问">
+                <i class="fa fa-chevron-left"></i> HDFS 命令行与编程访问
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/04/15/Hive-Install-And-Using/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/04/13/Hive-Install-And-Using/" rel="prev" title="Hive 安装使用">
+                Hive 安装使用 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -486,7 +487,7 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -495,7 +496,7 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-count">57</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -680,9 +681,9 @@ MapReduce 是以 Key-Value 方式处理数据的，标准流程:
 
     <script type="text/javascript">
       var disqus_shortname = 'fly2xiangs-site';
-      var disqus_identifier = '2018/04/15/First-MapReduce-Program/';
-      var disqus_title = "";
-      var disqus_url = 'http://www.liuzhixiang.com/2018/04/15/First-MapReduce-Program/';
+      var disqus_identifier = '2018/04/11/First-MapReduce-Program/';
+      var disqus_title = "第一个 MapReduce 程序";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/04/11/First-MapReduce-Program/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');

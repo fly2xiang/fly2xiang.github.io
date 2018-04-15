@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="fly2xiang's site" />
+  <meta name="keywords" content="Hadoop,大数据,分布式," />
 
 
 
@@ -84,46 +84,34 @@
 
 
 
-<meta name="description" content="title: “Hadoop 3.1.0 伪分布式搭建”date: 2018-04-09 11:20:17tags:
-
-Hadoop
-大数据
-分布式categories: 
-大数据
-
-概述Hadoop 介绍Hadoop 主要包含两个部分：
+<meta name="description" content="概述Hadoop 介绍Hadoop 主要包含两个部分：
 
 HDFS，即 Hadoop Distributed File System，一个分布式的文件系统，为大量数据的存储提供了解决方案
-YARN，即 Yet Ano">
+YARN，即 Yet Another Resource Negotiator，一个资源管理器，负责管理分配全局资源与任务生命周期内的所有事宜
+
+基础环境
+硬件 VMware Workstation 虚拟机， 4核">
 <meta property="og:type" content="article">
-<meta property="og:title" content="fly2xiang's site">
-<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/15/Hadoop-Pseudo-Distributed-Operation/index.html">
+<meta property="og:title" content="Hadoop 3.1.0 伪分布式搭建">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/04/09/Hadoop-Pseudo-Distributed-Operation/index.html">
 <meta property="og:site_name" content="fly2xiang's site">
-<meta property="og:description" content="title: “Hadoop 3.1.0 伪分布式搭建”date: 2018-04-09 11:20:17tags:
-
-Hadoop
-大数据
-分布式categories: 
-大数据
-
-概述Hadoop 介绍Hadoop 主要包含两个部分：
+<meta property="og:description" content="概述Hadoop 介绍Hadoop 主要包含两个部分：
 
 HDFS，即 Hadoop Distributed File System，一个分布式的文件系统，为大量数据的存储提供了解决方案
-YARN，即 Yet Ano">
-<meta property="og:updated_time" content="2018-04-15T14:38:43.861Z">
+YARN，即 Yet Another Resource Negotiator，一个资源管理器，负责管理分配全局资源与任务生命周期内的所有事宜
+
+基础环境
+硬件 VMware Workstation 虚拟机， 4核">
+<meta property="og:updated_time" content="2018-04-15T14:57:11.547Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fly2xiang's site">
-<meta name="twitter:description" content="title: “Hadoop 3.1.0 伪分布式搭建”date: 2018-04-09 11:20:17tags:
-
-Hadoop
-大数据
-分布式categories: 
-大数据
-
-概述Hadoop 介绍Hadoop 主要包含两个部分：
+<meta name="twitter:title" content="Hadoop 3.1.0 伪分布式搭建">
+<meta name="twitter:description" content="概述Hadoop 介绍Hadoop 主要包含两个部分：
 
 HDFS，即 Hadoop Distributed File System，一个分布式的文件系统，为大量数据的存储提供了解决方案
-YARN，即 Yet Ano">
+YARN，即 Yet Another Resource Negotiator，一个资源管理器，负责管理分配全局资源与任务生命周期内的所有事宜
+
+基础环境
+硬件 VMware Workstation 虚拟机， 4核">
 
 
 
@@ -144,10 +132,10 @@ YARN，即 Yet Ano">
 
 
 
-  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/15/Hadoop-Pseudo-Distributed-Operation/"/>
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/04/09/Hadoop-Pseudo-Distributed-Operation/"/>
 
 
-  <title>  | fly2xiang's site </title>
+  <title> Hadoop 3.1.0 伪分布式搭建 | fly2xiang's site </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -287,7 +275,7 @@ YARN，即 Yet Ano">
             
             
               
-                
+                Hadoop 3.1.0 伪分布式搭建
               
             
           </h1>
@@ -299,19 +287,38 @@ YARN，即 Yet Ano">
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-04-15T22:38:43+08:00" content="2018-04-15">
-              2018-04-15
+            <time itemprop="dateCreated" datetime="2018-04-09T11:20:17+08:00" content="2018-04-09">
+              2018-04-09
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/大数据/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/04/15/Hadoop-Pseudo-Distributed-Operation/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/15/Hadoop-Pseudo-Distributed-Operation/" itemprop="commentsCount"></span>
+                <a href="/2018/04/09/Hadoop-Pseudo-Distributed-Operation/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/09/Hadoop-Pseudo-Distributed-Operation/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -339,14 +346,7 @@ YARN，即 Yet Ano">
       
 
       
-        <p>title: “Hadoop 3.1.0 伪分布式搭建”<br>date: 2018-04-09 11:20:17<br>tags:</p>
-<ul>
-<li>Hadoop</li>
-<li>大数据</li>
-<li>分布式<br>categories: </li>
-<li>大数据</li>
-</ul>
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="Hadoop-介绍"><a href="#Hadoop-介绍" class="headerlink" title="Hadoop 介绍"></a>Hadoop 介绍</h3><p>Hadoop 主要包含两个部分：</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="Hadoop-介绍"><a href="#Hadoop-介绍" class="headerlink" title="Hadoop 介绍"></a>Hadoop 介绍</h3><p>Hadoop 主要包含两个部分：</p>
 <ul>
 <li>HDFS，即 Hadoop Distributed File System，一个分布式的文件系统，为大量数据的存储提供了解决方案</li>
 <li>YARN，即 Yet Another Resource Negotiator，一个资源管理器，负责管理分配全局资源与任务生命周期内的所有事宜</li>
@@ -416,6 +416,16 @@ YARN，即 Yet Ano">
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Hadoop/" rel="tag">#Hadoop</a>
+          
+            <a href="/tags/大数据/" rel="tag">#大数据</a>
+          
+            <a href="/tags/分布式/" rel="tag">#分布式</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
@@ -429,8 +439,8 @@ YARN，即 Yet Ano">
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/04/15/HDFS-Shell-And-Programing/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/04/10/HDFS-Shell-And-Programing/" rel="prev" title="HDFS 命令行与编程访问">
+                HDFS 命令行与编程访问 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -514,7 +524,7 @@ YARN，即 Yet Ano">
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -523,7 +533,7 @@ YARN，即 Yet Ano">
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-count">57</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -708,9 +718,9 @@ YARN，即 Yet Ano">
 
     <script type="text/javascript">
       var disqus_shortname = 'fly2xiangs-site';
-      var disqus_identifier = '2018/04/15/Hadoop-Pseudo-Distributed-Operation/';
-      var disqus_title = "";
-      var disqus_url = 'http://www.liuzhixiang.com/2018/04/15/Hadoop-Pseudo-Distributed-Operation/';
+      var disqus_identifier = '2018/04/09/Hadoop-Pseudo-Distributed-Operation/';
+      var disqus_title = "Hadoop 3.1.0 伪分布式搭建";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/04/09/Hadoop-Pseudo-Distributed-Operation/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
