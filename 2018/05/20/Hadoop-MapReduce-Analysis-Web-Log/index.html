@@ -1,0 +1,732 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hadoop,大数据,MapReduce," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="概述本例使用 MapReduce 对 Web 日志中客户端 IP 进行统计
+Mapper 的输入是 Web 日志，如下
+12310.168.1.73 ...10.1.1.2 ...10.1.1.2 ...
+Mapper 程序以数据的偏移为 Key，日志行为 Value 输入。数据偏移对于本例可以忽略，对输入行以空格分隔后第一个元素即为 IP。
+Mapper 的输出是以 IP 为 Key，由于一行只">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Hadoop MapReduce 分析日志">
+<meta property="og:url" content="http://www.liuzhixiang.com/2018/05/20/Hadoop-MapReduce-Analysis-Web-Log/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="概述本例使用 MapReduce 对 Web 日志中客户端 IP 进行统计
+Mapper 的输入是 Web 日志，如下
+12310.168.1.73 ...10.1.1.2 ...10.1.1.2 ...
+Mapper 程序以数据的偏移为 Key，日志行为 Value 输入。数据偏移对于本例可以忽略，对输入行以空格分隔后第一个元素即为 IP。
+Mapper 的输出是以 IP 为 Key，由于一行只">
+<meta property="og:updated_time" content="2018-07-19T14:59:03.928Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 Hadoop MapReduce 分析日志">
+<meta name="twitter:description" content="概述本例使用 MapReduce 对 Web 日志中客户端 IP 进行统计
+Mapper 的输入是 Web 日志，如下
+12310.168.1.73 ...10.1.1.2 ...10.1.1.2 ...
+Mapper 程序以数据的偏移为 Key，日志行为 Value 输入。数据偏移对于本例可以忽略，对输入行以空格分隔后第一个元素即为 IP。
+Mapper 的输出是以 IP 为 Key，由于一行只">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2018/05/20/Hadoop-MapReduce-Analysis-Web-Log/"/>
+
+
+  <title> 使用 Hadoop MapReduce 分析日志 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用 Hadoop MapReduce 分析日志
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-05-20T17:20:17+08:00" content="2018-05-20">
+              2018-05-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/大数据/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/05/20/Hadoop-MapReduce-Analysis-Web-Log/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/05/20/Hadoop-MapReduce-Analysis-Web-Log/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>本例使用 MapReduce 对 Web 日志中客户端 IP 进行统计</p>
+<p>Mapper 的输入是 Web 日志，如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">10.168.1.73 ...</div><div class="line">10.1.1.2 ...</div><div class="line">10.1.1.2 ...</div></pre></td></tr></table></figure>
+<p>Mapper 程序以数据的偏移为 Key，日志行为 Value 输入。数据偏移对于本例可以忽略，对输入行以空格分隔后第一个元素即为 IP。</p>
+<p>Mapper 的输出是以 IP 为 Key，由于一行只有一个 IP，直接以 1 作为 Value。如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">(10.168.1.73, 1)</div><div class="line">(10.1.1.2, 1)</div><div class="line">(10.1.1.2, 1)</div></pre></td></tr></table></figure>
+<p>经过 Shuffle （混洗），数据被处理为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(10.168.1.73, [1])</div><div class="line">(10.1.1.2, [1, 1])</div></pre></td></tr></table></figure>
+<p>混洗的过程可以描述为</p>
+<p>Mapper 对相同 Key 的数据进行聚合，然后复制到 Reducer 节点，Reducer 节点对来自多个 Mapper 节点的相同 Key 数据再进一步聚合。这里保证了相同 Key 的数据会被放到一个 Reducer 中。</p>
+<p>Reducer 接收到数据，对每个 Key 的 Value 相加，输出结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(10.168.1.73, 1)</div><div class="line">(10.1.1.2, 2)</div></pre></td></tr></table></figure>
+<p>至此，整个 MapReduce 完成。</p>
+<p>处理大数据量数据时，为减少网路 IO， Mapper 程序会在靠近数据的节点上运行，优先在数据节点上运行，若数据节点上存在繁忙的 Mapper 程序，则会在同一机架的节点上运行，最后才会挑选不同机架的节点上运行。</p>
+<p>Mapper 处理完成时需要将输出传输到 Reducer 节点，这部分需要进行网络传输。为减少这部分的网络 IO，引入了 Combiner 函数。<br>Combiner 函数就像运行在 Mapper 节点上的 Reducer 一样，将一个 Mapper 的输出先进行处理。<br>在本例中，Combiner 函数可以将 Mapper 输出的次数先进行相加。也即：</p>
+<p>Mapper 1 输出为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(10.168.1.73, 1)</div><div class="line">(10.1.1.2, 1)</div></pre></td></tr></table></figure>
+<p>Mapper 2 输出为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(10.1.1.2, 1)</div><div class="line">(10.1.1.2, 1)</div></pre></td></tr></table></figure>
+<p>在不使用 Combiner 时，直接将 Mapper 输出传输到 Reducer 节点。若使用 Combiner 函数，</p>
+<p>Mapper 1 Combiner 输出为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(10.168.1.73, 1)</div><div class="line">(10.1.1.2, 1)</div></pre></td></tr></table></figure>
+<p>Mapper 2 Combiner 输出为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(10.1.1.2, 2)</div></pre></td></tr></table></figure>
+<p>可以减少传输到 Reducer 的数据量。</p>
+<p>Combiner 函数并不是在任何时刻都可以使用，例如在计算平均值时，各个 Mapper 的平均值在 Reducer 上再求平均值与整体求平均值很可能是不同的。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>样例代码为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.apache.hadoop.fs.Path;</div><div class="line"><span class="keyword">import</span> org.apache.hadoop.io.LongWritable;</div><div class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</div><div class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Job;</div><div class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Mapper;</div><div class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Reducer;</div><div class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.input.FileInputFormat;</div><div class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LogMain</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException, InterruptedException </span>&#123;</div><div class="line">        Job job = Job.getInstance();</div><div class="line">        job.setJobName(<span class="string">"Log Analysis: Request Times per IP"</span>);</div><div class="line">        job.setJarByClass(LogMain.class);</div><div class="line"></div><div class="line">        FileInputFormat.addInputPath(job, <span class="keyword">new</span> Path(args[<span class="number">0</span>]));</div><div class="line">        FileOutputFormat.setOutputPath(job, <span class="keyword">new</span> Path(args[<span class="number">1</span>]));</div><div class="line"></div><div class="line">        job.setMapperClass(LogMapper.class);</div><div class="line">        <span class="comment">/*</span></div><div class="line">         指定 Combiner，Combiner 同样是继承 Reducer，</div><div class="line">         此处 Combiner 的逻辑与 Reducer 的逻辑相同，指定相同的类</div><div class="line">          */</div><div class="line">        job.setCombinerClass(LogReducer.class);</div><div class="line">        job.setReducerClass(LogReducer.class);</div><div class="line"></div><div class="line">        <span class="comment">// 此处 Reducer 输出与 Mapper 输出类型相同，无需对 Mapper 指定输出类型，否则需要为 Mapper 指定输出类型</span></div><div class="line">        job.setOutputKeyClass(Text.class);</div><div class="line">        job.setOutputValueClass(LongWritable.class);</div><div class="line"></div><div class="line">        System.exit(job.waitForCompletion(<span class="keyword">true</span>) ? <span class="number">0</span>: <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 此处指定泛型依次是 Mapper 的输入 Key 类型，Mapper 的输入 Value 类型，Mapper 的输出 Key 类型，Mapper 的输出 Value 类型</div><div class="line"> */</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogMapper</span> <span class="keyword">extends</span> <span class="title">Mapper</span>&lt;<span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(LongWritable key, Text value, Context context)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</div><div class="line">        String line = value.toString();</div><div class="line">        String[] split = line.split(<span class="string">" "</span>, <span class="number">2</span>);</div><div class="line">        String ip = <span class="string">""</span>;</div><div class="line">        <span class="keyword">long</span> count = <span class="number">0</span>;</div><div class="line">        <span class="keyword">if</span> (split.length &gt; <span class="number">1</span>) &#123;</div><div class="line">            ip = split[<span class="number">0</span>];</div><div class="line">            count = <span class="number">1</span>;</div><div class="line">        &#125;</div><div class="line">        context.write(<span class="keyword">new</span> Text(ip), <span class="keyword">new</span> LongWritable(count));</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 此处指定的泛型依次是 Reducer 的输入 Key 类型，Reducer 的输入 Value 类型，Reducer 的输出 Key 类型，Reducer 的输出 Value 类型</div><div class="line"> */</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogReducer</span> <span class="keyword">extends</span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text key, Iterable&lt;LongWritable&gt; values, Context context)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</div><div class="line">        <span class="keyword">long</span> count = <span class="number">0</span>;</div><div class="line">        <span class="keyword">for</span> (LongWritable l : values) &#123;</div><div class="line">            count += l.get();</div><div class="line">        &#125;</div><div class="line">        context.write(key, <span class="keyword">new</span> LongWritable(count));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输入数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">46.161.55.108 - - [08/Apr/2018:14:56:56 +0800] https://60.205.189.113 - &quot;GET /_asterisk/ HTTP/1.1&quot; 404 162 &quot;-&quot; &quot;python-requests/2.18.4&quot; &quot;-&quot;</div><div class="line">1.199.93.43 - - [08/Apr/2018:15:11:00 +0800] http://q2.cdn.example.com - &quot;GET / HTTP/1.1&quot; 403 564 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36&quot; &quot;171.8.70.8&quot;</div><div class="line">5.45.207.60 - - [08/Apr/2018:16:01:01 +0800] https://h5.example.com - &quot;GET /robots.txt HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">5.45.207.60 - - [08/Apr/2018:16:01:03 +0800] https://h5.example.com - &quot;GET /node_modules/postcss-reduce-idents HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.142.120 - - [08/Apr/2018:16:01:09 +0800] https://h5.example.com - &quot;GET /node_modules/icss-replace-symbols/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.142.120 - - [08/Apr/2018:16:01:10 +0800] https://h5.example.com - &quot;GET /node_modules/babel-helper-replace-supers/lib HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">5.45.207.41 - - [08/Apr/2018:16:01:18 +0800] https://h5.example.com - &quot;GET /node_modules/babel-helper-optimise-call-expression HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.183.10 - - [08/Apr/2018:16:01:24 +0800] https://h5.example.com - &quot;GET /node_modules/babel-plugin-transform-es2015-modules-commonjs/lib/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">37.9.113.74 - - [08/Apr/2018:16:01:57 +0800] https://h5.example.com - &quot;GET /node_modules/_jsesc@0.5.0@jsesc/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div><div class="line">141.8.142.21 - - [08/Apr/2018:16:02:00 +0800] https://h5.example.com - &quot;GET /node_modules/webpack-sources/node_modules/ HTTP/1.1&quot; 502 166 &quot;-&quot; &quot;Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)&quot; &quot;-&quot;</div></pre></td></tr></table></figure>
+<p>分别执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"># 编译</div><div class="line">export HADOOP_CLASSPATH=$&#123;JAVA_HOME&#125;/lib/tools.jar</div><div class="line">hadoop com.sun.tools.javac.Main LogMain.java</div><div class="line"># 打包</div><div class="line">jar cf demo.jar *.class</div><div class="line"># 准备数据</div><div class="line">hadoop fs -mkdir -p /user/hadoop/log_analysis/input</div><div class="line">hadoop fs -put access_last_10.log /user/hadoop/log_analysis/input/</div><div class="line"># 执行</div><div class="line">hadoop jar demo.jar LogMain /user/hadoop/log_analysis/input /user/hadoop/log_analysis/output</div><div class="line"># 查看结果</div><div class="line">hadoop fs -ls /user/hadoop/log_analysis/output</div><div class="line">hadoop fs -cat /user/hadoop/log_analysis/output/part-r-00000</div></pre></td></tr></table></figure>
+<p>可以看到结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">1.199.93.43     1</div><div class="line">141.8.142.120   2</div><div class="line">141.8.142.21    1</div><div class="line">141.8.183.10    1</div><div class="line">37.9.113.74     1</div><div class="line">46.161.55.108   1</div><div class="line">5.45.207.41     1</div><div class="line">5.45.207.60     2</div></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p>《Hadoop 权威指南》</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hadoop/" rel="tag">#Hadoop</a>
+          
+            <a href="/tags/大数据/" rel="tag">#大数据</a>
+          
+            <a href="/tags/MapReduce/" rel="tag">#MapReduce</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/12/Using-Phoenix/" rel="next" title="Phoenix 使用">
+                <i class="fa fa-chevron-left"></i> Phoenix 使用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/19/Using-Selenium/" rel="prev" title="使用 Selenium 与 ChromeDriver 进行自动化测试">
+                使用 Selenium 与 ChromeDriver 进行自动化测试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">3.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2018/05/20/Hadoop-MapReduce-Analysis-Web-Log/';
+      var disqus_title = "使用 Hadoop MapReduce 分析日志";
+      var disqus_url = 'http://www.liuzhixiang.com/2018/05/20/Hadoop-MapReduce-Analysis-Web-Log/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
