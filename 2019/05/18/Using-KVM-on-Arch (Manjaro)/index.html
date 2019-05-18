@@ -1,0 +1,788 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Arch,Manjaro,KVM,虚拟化,Libvirt,QEMU," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="介绍QEMU 是 Quick Emulator 的缩写。从名称可以看出，它是一个模拟器。从功能上看，它可以在一种架构的硬件上模拟其他架构的硬件，比如 Android 开发时所用的官方模拟器底层即是基于 QEMU 的，它在 x86 平台上模拟 ARM。
+为实现模拟不同架构硬件的功能，QEMU 会对 CPU 指令进行翻译，涉及到内核与用户代码的转换，性能较低。但另一个优势由于 QEMU 不涉及到宿主机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 Arch Linux (Manjaro) 中使用 KVM 虚拟机">
+<meta property="og:url" content="http://www.liuzhixiang.com/2019/05/18/Using-KVM-on-Arch (Manjaro)/index.html">
+<meta property="og:site_name" content="fly2xiang's site">
+<meta property="og:description" content="介绍QEMU 是 Quick Emulator 的缩写。从名称可以看出，它是一个模拟器。从功能上看，它可以在一种架构的硬件上模拟其他架构的硬件，比如 Android 开发时所用的官方模拟器底层即是基于 QEMU 的，它在 x86 平台上模拟 ARM。
+为实现模拟不同架构硬件的功能，QEMU 会对 CPU 指令进行翻译，涉及到内核与用户代码的转换，性能较低。但另一个优势由于 QEMU 不涉及到宿主机">
+<meta property="og:updated_time" content="2019-05-18T05:46:53.243Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在 Arch Linux (Manjaro) 中使用 KVM 虚拟机">
+<meta name="twitter:description" content="介绍QEMU 是 Quick Emulator 的缩写。从名称可以看出，它是一个模拟器。从功能上看，它可以在一种架构的硬件上模拟其他架构的硬件，比如 Android 开发时所用的官方模拟器底层即是基于 QEMU 的，它在 x86 平台上模拟 ARM。
+为实现模拟不同架构硬件的功能，QEMU 会对 CPU 指令进行翻译，涉及到内核与用户代码的转换，性能较低。但另一个优势由于 QEMU 不涉及到宿主机">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://www.liuzhixiang.com/2019/05/18/Using-KVM-on-Arch (Manjaro)/"/>
+
+
+  <title> 在 Arch Linux (Manjaro) 中使用 KVM 虚拟机 | fly2xiang's site </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9b0660159ad33616e8f2bb7343977b4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">fly2xiang's site</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                在 Arch Linux (Manjaro) 中使用 KVM 虚拟机
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-05-18T13:43:23+08:00" content="2019-05-18">
+              2019-05-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/虚拟化/" itemprop="url" rel="index">
+                    <span itemprop="name">虚拟化</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2019/05/18/Using-KVM-on-Arch (Manjaro)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/18/Using-KVM-on-Arch (Manjaro)/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>QEMU 是 Quick Emulator 的缩写。从名称可以看出，它是一个模拟器。从功能上看，它可以在一种架构的硬件上模拟其他架构的硬件，比如 Android 开发时所用的官方模拟器底层即是基于 QEMU 的，它在 x86 平台上模拟 ARM。</p>
+<p>为实现模拟不同架构硬件的功能，QEMU 会对 CPU 指令进行翻译，涉及到内核与用户代码的转换，性能较低。但另一个优势由于 QEMU 不涉及到宿主机的内核，可以完全在用户态运行，这样可以让它在一些受限场景下使用 (比如无法在宿主机安装驱动的环境)。</p>
+<p>在宿主机与虚拟机是相同架构时，它们的 CPU 指令几乎完全相同，完全不需要指令翻译，可以完全透传给宿主机硬件。省去指令翻译与内核与用户代码的转换后可以达到接近宿主机性能。</p>
+<p>所以在 Android 开发时，有时会使用 <a href="https://www.genymotion.com/" target="_blank" rel="external">genymotion</a> 之类的模拟器，这些模拟器是基于 Android x86 平台的，不需要跨架构的指令翻译。</p>
+<p>macOS 上的 iOS 模拟器不是模拟了 ARM 平台，在模拟器中跑的是 x86 平台，所以不能安装网络上下载的 ipa 格式的 iOS 软件包。</p>
+<p>QEMU 可以使用其他虚拟机管理程序，比如 Xen 或 KVM 来使用虚拟化技术，达到接近宿主机的性能。</p>
+<p>KVM 是 Kernel-based Virtual Machine 的缩写，即内核级虚拟机。</p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>如标题所述，这里使用 Arch Linux (Manjaro 是一样的) 作为宿主机操作系统。</p>
+<h3 id="环境检查"><a href="#环境检查" class="headerlink" title="环境检查"></a>环境检查</h3><p>使用以下命令检查是否支持硬件虚拟化技术:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 这里输出几行内容表示支持硬件虚拟化技术</span></div><div class="line">grep -E <span class="string">"(vmx|svm)"</span> --color=always /proc/cpuinfo</div><div class="line"></div><div class="line"><span class="comment"># 或者使用，输出 Virtualization 技术的名称</span></div><div class="line">LC_ALL=C lscpu | grep Virtualization</div></pre></td></tr></table></figure></p>
+<p>KVM 虚拟化依赖硬件虚拟化技术，需要使用支持虚拟化技术的 CPU 并在 BIOS 中开启虚拟化功能。</p>
+<p>虚拟化技术在各个厂商这里名称不同，Intel 这里称为 Intel VT，AMD 称之为 SVM。</p>
+<p>我的 CPU 为 Intel J1900@2.0GHz 4 Core。<br>查询 <a href="https://ark.intel.com/content/www/us/en/ark/products/78867/intel-celeron-processor-j1900-2m-cache-up-to-2-42-ghz.html" target="_blank" rel="external">Intel Product Specifications</a> 可以看到这块 CPU 支持 Intel® Virtualization Technology (VT-x) 技术，不支持 Intel® Virtualization Technology for Directed I/O (VT-d) 。</p>
+<p>VT-x 也就是我们常说的硬件虚拟化，VT-d 用于试宿主机硬件直通虚拟机。</p>
+<p>这里只需要硬件虚拟化技术，所以是满足 KVM 的使用要求的。</p>
+<h3 id="检查内核"><a href="#检查内核" class="headerlink" title="检查内核"></a>检查内核</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 这里输出中需要包含 kvm kvm_intel</span></div><div class="line">lsmod | grep kvm</div><div class="line"></div><div class="line"><span class="comment"># 这里输出中需要包含 virtio</span></div><div class="line">lsmod | grep virtio</div><div class="line"></div><div class="line"><span class="comment"># 没有 virtio 时执行</span></div><div class="line">sudo modprobe virtio</div></pre></td></tr></table></figure>
+<h3 id="安装所需的软件包"><a href="#安装所需的软件包" class="headerlink" title="安装所需的软件包"></a>安装所需的软件包</h3><p>执行下面的指令来安装所需的软件包：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># </span></div><div class="line">yay -Sy qemu libvirt ebtables dnsmasq bridge-utils openbsd-netcat</div><div class="line"></div><div class="line"><span class="comment"># 图形化的管理界面，如果使用带桌面环境的操作系统可选安装。我这里不安装</span></div><div class="line"><span class="comment"># yay -Sy virt-manager</span></div></pre></td></tr></table></figure></p>
+<ul>
+<li>qemu QEMU 软件，提供 qemu-img 等命令</li>
+<li>libvirt 提供管理虚拟机、存储、网络的功能</li>
+<li>ebtables 桥接网络管理，用于 default NAT 网络</li>
+<li>dnsmasq DHCP DNS 服务，用于 default NAT 网络</li>
+<li>bridge-utils 桥接网络管理，用于桥接网络</li>
+<li>openbsd-netcat 用于通过 SSH 管理</li>
+</ul>
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><p>执行以下命令启动所需服务：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 启动虚拟机管理后台服务</span></div><div class="line">sudo systemctl start libvirtd</div><div class="line"><span class="comment"># 启动 default NAT 网络</span></div><div class="line">sudo virsh net-start default</div></pre></td></tr></table></figure></p>
+<p>按照以上方式安装好软件包之后，应当已经存在 default network，若启动上述服务时出现错误可使用以下命令检查：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 列出网络</span></div><div class="line">sudo virsh net-list --all</div><div class="line"></div><div class="line"><span class="comment"># 若没有任何网络，可手动定义网络</span></div><div class="line">sudo virsh net-define /etc/libvirt/qemu/networks/default.xml</div></pre></td></tr></table></figure></p>
+<h3 id="下载-virtio-驱动"><a href="#下载-virtio-驱动" class="headerlink" title="下载 virtio 驱动"></a>下载 virtio 驱动</h3><p>在 KVM 中使用 virtio 设备将 io 设备 (例如：磁盘、网卡等) 半虚拟化可以提高虚拟机的 io 性能，但需要在虚拟机中安装 virtio 设备驱动。</p>
+<p>从 <a href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.164-2/" target="_blank" rel="external">https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.164-2/</a> 下载：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">virtio-win-0.1.164.iso</div><div class="line">virtio-win-0.1.164_amd64.vfd</div><div class="line">virtio-win-0.1.164_x86.vfd</div></pre></td></tr></table></figure></p>
+<p>两个 vfd 分别 Windows 为 32 位系统与 64 位系统的 KVM 使用的软盘驱动，iso 为驱动光盘。</p>
+<h2 id="安装虚拟机"><a href="#安装虚拟机" class="headerlink" title="安装虚拟机"></a>安装虚拟机</h2><p>通过以下命令安装虚拟机，这里安装 Windows 7 x86 作为示例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 创建磁盘，这里创建一个 40G 的 qcow2 磁盘 (Copy on Write)</span></div><div class="line">qemu-img create <span class="_">-f</span> qcow2 win7.qcow2 40G</div><div class="line"><span class="comment"># 安装虚拟机</span></div><div class="line">sudo virt-install --name win7 --memory 1024 --vcpus 2 --cpu host --cdrom GRMCENVOL_ZH-CN_PIP.iso --os-variant win7 --disk win7.qcow2,bus=virtio  --disk virtio-win-0.1.164_x86.vfd,device=floppy --network network=default,model=virtio --graphics vnc,listen=0.0.0.0,port=5920</div></pre></td></tr></table></figure></p>
+<p>以上命令通过参数指定了：</p>
+<ul>
+<li>虚拟机名称为 win7</li>
+<li>内存 1024M，即 1G</li>
+<li>虚拟机 CPU 2核心</li>
+<li>虚拟机 CPU 指定为透传宿主机</li>
+<li>安装光盘镜像</li>
+<li>操作系统类型指定为 Windows 7</li>
+<li>磁盘路径与总线类型为 virtio</li>
+<li>virtio x86 驱动软盘</li>
+<li>网络为 default NAT，总线类型为 virtio</li>
+<li>VNC 远程访问监听地址与端口</li>
+</ul>
+<p>执行命令后，可使用 vnc 客户端连接宿主机的 5920 端口看到系统已经启动，按照步骤安装即可。</p>
+<p>需要注意的是，由于我们使用了 virtio 磁盘，在选择安装位置时是找不到磁盘的。需要点击加载驱动程序，然后扫描后会列出软盘中的驱动程序。此时选择 <code>VirtIO SCSI controller</code> Win7 对应的驱动，点击下一步 (此时也可一并选择显卡与网卡对应的驱动进行安装，一并安装)，就可以看到磁盘了。新建分区、安装即可。</p>
+<h3 id="安装驱动"><a href="#安装驱动" class="headerlink" title="安装驱动"></a>安装驱动</h3><p>安装完成后进入系统，先关机，然后执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo virsh edit win7</div></pre></td></tr></table></figure></p>
+<p>此时进入 vi 编辑 win7 虚拟机的配置 xml。找到 cdrom 章节，将系统镜像路径改为 virtio 驱动光盘 iso 镜像的路径，保存退出。</p>
+<p>执行以下命令开机:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo virsh start win7</div></pre></td></tr></table></figure></p>
+<p>进入到 win7 的设备管理器，安装其他设备的驱动 (在光盘中搜索即可)。</p>
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><h4 id="虚拟机时钟问题"><a href="#虚拟机时钟问题" class="headerlink" title="虚拟机时钟问题"></a>虚拟机时钟问题</h4><p>如果发现 win7 的运行速度飞快，动画加速，时钟比真实时间跑的快，时钟异常。好像安装了加速齿轮一样。可进行以下操作：</p>
+<ol>
+<li><p>在客户机 cmd 中以管理员权限执行：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># 返回 操作成功完成。</div><div class="line">bcdedit /<span class="built_in">set</span> &#123;default&#125; useplatformclock yes</div></pre></td></tr></table></figure>
+</li>
+<li><p>关闭虚拟机</p>
+</li>
+<li>编辑虚拟机配置<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo virsh edit win7</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>找到 <code>&lt;clock</code> 节，当前应该是这样的：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">clock</span> <span class="attr">offset</span>=<span class="string">'localtime'</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">timer</span> <span class="attr">name</span>=<span class="string">'rtc'</span> <span class="attr">tickpolicy</span>=<span class="string">'catchup'</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">timer</span> <span class="attr">name</span>=<span class="string">'pit'</span> <span class="attr">tickpolicy</span>=<span class="string">'delay'</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">timer</span> <span class="attr">name</span>=<span class="string">'hpet'</span> <span class="attr">present</span>=<span class="string">'no'</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">timer</span> <span class="attr">name</span>=<span class="string">'hypervclock'</span> <span class="attr">present</span>=<span class="string">'yes'</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">clock</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>将后面的 3 个 timer 删除，也就是改为：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">clock</span> <span class="attr">offset</span>=<span class="string">'localtime'</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">timer</span> <span class="attr">name</span>=<span class="string">'rtc'</span> <span class="attr">tickpolicy</span>=<span class="string">'catchup'</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">clock</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>保存退出，然后启动虚拟机，可以看到虚拟机时钟已经恢复了正常。</p>
+<h2 id="其他安装注意事项"><a href="#其他安装注意事项" class="headerlink" title="其他安装注意事项"></a>其他安装注意事项</h2><p>安装 Windows 8 以上系统时，在安装好之后应当关闭 <code>快速启动</code>，在 <code>控制面板 -&gt; 电源选项</code> 中。</p>
+<h2 id="其他说明"><a href="#其他说明" class="headerlink" title="其他说明"></a>其他说明</h2><h3 id="气球设备"><a href="#气球设备" class="headerlink" title="气球设备"></a>气球设备</h3><p>在安装驱动时，有一个 balloon 设备，也就是气球设备，气球设备允许在客户机运行时修改客户机的内存大小：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 将内存限制为 512M</span></div><div class="line">virsh qemu-monitor-command --domain win7 --hmp <span class="string">'balloon 512'</span></div></pre></td></tr></table></figure></p>
+<h3 id="嵌套虚拟化"><a href="#嵌套虚拟化" class="headerlink" title="嵌套虚拟化"></a>嵌套虚拟化</h3><p>启用嵌套虚拟化功能：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo modprobe -r kvm_intel</div><div class="line">sudo modprobe kvm_intel nested=1</div></pre></td></tr></table></figure></p>
+<p>永久生效：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo vim /etc/modprobe.d/modprobe.conf</div><div class="line"><span class="comment"># 修改或添加以下内容</span></div><div class="line">options kvm_intel nested=1</div></pre></td></tr></table></figure></p>
+<p>检查嵌套虚拟化是否激活：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 输出  nested              = "Y"</span></div><div class="line">systool -m kvm_intel -v | grep nested</div></pre></td></tr></table></figure>
+<h3 id="磁盘缓存"><a href="#磁盘缓存" class="headerlink" title="磁盘缓存"></a>磁盘缓存</h3><p>推荐使用 none；提高客户机性能可选 unsafe；提高安全性可选 writeback。</p>
+<p>可参考 <a href="https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/virtualization_tuning_and_optimization_guide/sect-virtualization_tuning_optimization_guide-blockio-caching" target="_blank" rel="external">虚拟化调试和优化指南 6.3. 缓存</a></p>
+<h3 id="后期转换磁盘总线"><a href="#后期转换磁盘总线" class="headerlink" title="后期转换磁盘总线"></a>后期转换磁盘总线</h3><p>如果安装时选择了 SCSI 磁盘总线，安装后改为 virtio 时。由于没有对应的驱动，系统将启动不了。可按照以下方法安装 virtio 磁盘驱动：</p>
+<ol>
+<li>若已修改了磁盘总线为 virtio，需要将原系统磁盘改回 SCSI；</li>
+<li>为客户机创建一个新磁盘；</li>
+<li>通过 virt-manager 或编辑 xml 添加新磁盘到客户机，使用 virtio 总线；</li>
+<li>启动客户机，在 <code>设备管理器</code> 通过光盘安装新磁盘的 virtio 驱动；</li>
+<li>关机，移除并删除新磁盘；</li>
+<li>启动客户机，此时由于系统已有 virtio 驱动，可以正常启动。</li>
+</ol>
+<h3 id="完全使用命令安装-Linux-系统"><a href="#完全使用命令安装-Linux-系统" class="headerlink" title="完全使用命令安装 Linux 系统"></a>完全使用命令安装 Linux 系统</h3><p>这里以 CentOS 7 为例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo virt-install --name centos --memory 1024 --vcpus 2 --cpu host --location CentOS-7-x86_64-Minimal-1810.iso --os-variant <span class="string">'centos7.0'</span> --disk centos.qcow2,bus=virtio --network network=default,model=virtio --graphics none --extra-args console=ttyS0</div></pre></td></tr></table></figure>
+<ul>
+<li>这里使用 <code>--location</code> 而不是 <code>--cdrom</code> 为了支持 <code>--extra-args</code> 内核扩展参数；</li>
+<li><code>--location</code> 配合 iso 使用时 virt-install 会使用 isoinfo 命令来从 iso 获取信息，所以必须安装 <code>yay -Sy cdrtools</code>。</li>
+</ul>
+<h2 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h2><p>一些有用的其他命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># 列出虚拟机</div><div class="line">virsh list --all</div><div class="line"># 导出虚拟机定义，可将磁盘文件与导出的定义复制到其他机器使用</div><div class="line">virsh dumpxml win7 &gt; win7.xml</div><div class="line"># 导入虚拟机</div><div class="line">virsh define --file=win7.xml</div><div class="line"># 给虚拟机发送关机指令</div><div class="line">virsh shutdown win7</div><div class="line"># 强制关闭虚拟机 (直接断电)</div><div class="line">virsh destory win7</div><div class="line"># 删除虚拟机</div><div class="line">virsh undefine win7</div></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p>Arch 文档：</p>
+<ul>
+<li><a href="https://wiki.archlinux.org/index.php/QEMU_(简体中文" target="_blank" rel="external">https://wiki.archlinux.org/index.php/QEMU_(简体中文)</a>)</li>
+<li><a href="https://wiki.archlinux.org/index.php/Libvirt_(简体中文" target="_blank" rel="external">https://wiki.archlinux.org/index.php/Libvirt_(简体中文)</a>)</li>
+<li><a href="https://wiki.archlinux.org/index.php/KVM_(简体中文" target="_blank" rel="external">https://wiki.archlinux.org/index.php/KVM_(简体中文)</a>)</li>
+</ul>
+<p>虚拟机时钟问题：</p>
+<ul>
+<li><a href="https://bugzilla.redhat.com/show_bug.cgi?id=742736" target="_blank" rel="external">https://bugzilla.redhat.com/show_bug.cgi?id=742736</a></li>
+<li><a href="https://www.linuxquestions.org/questions/linux-software-2/kvm-trouble-width-time-4175546057/" target="_blank" rel="external">https://www.linuxquestions.org/questions/linux-software-2/kvm-trouble-width-time-4175546057/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Arch/" rel="tag">#Arch</a>
+          
+            <a href="/tags/Manjaro/" rel="tag">#Manjaro</a>
+          
+            <a href="/tags/KVM/" rel="tag">#KVM</a>
+          
+            <a href="/tags/虚拟化/" rel="tag">#虚拟化</a>
+          
+            <a href="/tags/Libvirt/" rel="tag">#Libvirt</a>
+          
+            <a href="/tags/QEMU/" rel="tag">#QEMU</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/16/Cpp-Common-Pool-Template-Base/" rel="next" title="编写基于模板的C++通用池">
+                <i class="fa fa-chevron-left"></i> 编写基于模板的C++通用池
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fly2xiang" />
+          <p class="site-author-name" itemprop="name">fly2xiang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">71</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/fly2xiang" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/fly2xiang" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#环境准备"><span class="nav-number">2.</span> <span class="nav-text">环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#环境检查"><span class="nav-number">2.1.</span> <span class="nav-text">环境检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查内核"><span class="nav-number">2.2.</span> <span class="nav-text">检查内核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装所需的软件包"><span class="nav-number">2.3.</span> <span class="nav-text">安装所需的软件包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动服务"><span class="nav-number">2.4.</span> <span class="nav-text">启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载-virtio-驱动"><span class="nav-number">2.5.</span> <span class="nav-text">下载 virtio 驱动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装虚拟机"><span class="nav-number">3.</span> <span class="nav-text">安装虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装驱动"><span class="nav-number">3.1.</span> <span class="nav-text">安装驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常处理"><span class="nav-number">3.2.</span> <span class="nav-text">异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟机时钟问题"><span class="nav-number">3.2.1.</span> <span class="nav-text">虚拟机时钟问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他安装注意事项"><span class="nav-number">4.</span> <span class="nav-text">其他安装注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他说明"><span class="nav-number">5.</span> <span class="nav-text">其他说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#气球设备"><span class="nav-number">5.1.</span> <span class="nav-text">气球设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#嵌套虚拟化"><span class="nav-number">5.2.</span> <span class="nav-text">嵌套虚拟化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#磁盘缓存"><span class="nav-number">5.3.</span> <span class="nav-text">磁盘缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后期转换磁盘总线"><span class="nav-number">5.4.</span> <span class="nav-text">后期转换磁盘总线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完全使用命令安装-Linux-系统"><span class="nav-number">5.5.</span> <span class="nav-text">完全使用命令安装 Linux 系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他命令"><span class="nav-number">6.</span> <span class="nav-text">其他命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">7.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly2xiang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'fly2xiangs-site';
+      var disqus_identifier = '2019/05/18/Using-KVM-on-Arch (Manjaro)/';
+      var disqus_title = "在 Arch Linux (Manjaro) 中使用 KVM 虚拟机";
+      var disqus_url = 'http://www.liuzhixiang.com/2019/05/18/Using-KVM-on-Arch (Manjaro)/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
